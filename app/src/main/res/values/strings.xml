@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">L2B Móvil</string>
+    <string name="header_activity_main">Inicio De Sesión</string>
+    <string name="tv1_activity_main">Crear una cuenta</string>
+
+    <!--Registro-->
+    <string name="title_activity_registro">Crea tu cuenta</string>
+    <string name="tv_username">Nombre de usuario:</string>
+    <string name="tv_email">Correo electrónico:</string>
+    <string name="tv_pass">Contraseña:</string>
+    <string name="tv_repeatpass">Repite la contraseña:</string>
+    <string name="btn_listo">Listo</string>
+    <string name="btn_cancel">Cancelar</string>
+
+    <string name="title_activity_principal">Principal</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">LogOut</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>

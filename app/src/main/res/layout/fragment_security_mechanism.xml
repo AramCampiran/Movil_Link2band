@@ -1,0 +1,111 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="edu.cecyt9.ipn.movil_link2band.SecurityMechanism">
+
+    <!-- TODO: Update blank fragment layout -->
+    <Switch
+        android:id="@+id/saveMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10mm"
+        android:layout_marginTop="3mm"
+        android:switchPadding="10mm"
+        android:text="Activar modo guardian" />
+
+    <Switch
+        android:id="@+id/blockMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="10mm"
+        android:layout_marginTop="2mm"
+        android:switchPadding="15mm"
+        android:text="Bloqueo" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="2mm">
+        <RadioButton
+            android:id="@+id/partial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Parcial"
+            android:layout_marginEnd="7mm"
+            android:visibility="invisible"/>
+
+        <RadioButton
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total"
+            android:visibility="invisible"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="2mm">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duracion de alarma"
+            android:textColor="@android:color/black"
+            android:paddingEnd="3mm"/>
+
+        <Button
+            android:id="@+id/duracion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:text="1 minuto" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="2mm">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tono de alrma"
+            android:paddingEnd="5mm"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/tone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:text="SEleccionar tono"/>
+    </LinearLayout>
+
+        <Button
+            android:id="@+id/msj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2mm"
+            android:background="@color/white"
+            android:text="Escribe un mensaje de alerta"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/gray"
+            android:textAlignment="center"
+            android:text="Mensaje en pantalla"/>
+
+
+</LinearLayout>

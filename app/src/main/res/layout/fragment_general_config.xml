@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="3mm"
+    tools:context="edu.cecyt9.ipn.movil_link2band.GeneralConfig">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editar datos"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"
+        android:textSize="5mm"
+        android:fontFamily="monospace"/>
+
+    <EditText
+        android:id="@+id/nom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="nombre de usuario"
+        android:layout_marginTop="2mm"
+        android:textAlignment="center"
+        android:inputType="textPersonName" />
+    <EditText
+        android:id="@+id/mail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginTop="2mm"
+        android:hint="Correo@exemple.com"/>
+
+    <EditText
+        android:id="@+id/pssw"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2mm"
+        android:textAlignment="center"
+        android:hint="contraseña"
+        android:ems="10"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/psswX2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2mm"
+        android:ems="10"
+        android:hint="Repita contraseña"
+        android:textAlignment="center"
+        android:inputType="textPersonName"/>
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5mm"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:text="Guardar"/>
+</LinearLayout>
