@@ -1,15 +1,22 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -40,7 +47,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     private static final String ARG_PARAM2 = "param2";
 
     View view;
-    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear;
+    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar;
     TextView msj;
     String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
@@ -54,6 +61,10 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     DevicePolicyManager devicePolicyManager;
     ComponentName component;
     int REQUEST_ENABLE = 0;
+
+    LocationManager locationManager;
+    double longitudGPS, latitudGPS;
+    String txt;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -113,6 +124,11 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
         uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        btnLocalizar = view.findViewById(R.id.localizar);
+        btnLocalizar.setOnClickListener(this);
+
 
         return view;
     }
@@ -192,7 +208,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     })
                     .setNegativeButton("cancelar", null).show();
-        }else if (v.getId() == btnBloquear.getId()){
+        } else if (v.getId() == btnBloquear.getId()) {
             devicePolicyManager = (DevicePolicyManager) getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
             component = new ComponentName(getContext(), Darclass.class);
 
@@ -201,17 +217,84 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                     .setPositiveButton("si", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            if (!devicePolicyManager.isAdminActive(component)){
+                            if (!devicePolicyManager.isAdminActive(component)) {
                                 Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
                                 startActivityForResult(intent, REQUEST_ENABLE);
-                            }else{
+                            } else {
                                 devicePolicyManager.lockNow();
                             }
                         }
                     })
                     .setNegativeButton("nel", null).show();
+        } else if (v.getId() == btnLocalizar.getId()) {
+            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle("activar ubicacion")
+                        .setMessage("su ubicacion esta desactivada \n por favor active su ubicacion")
+                        .setPositiveButton("Configurar ubicacion", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancelar", null)
+                        .show();
+            } else {
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                } else {
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+                        return;
+                    }
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2*20*1000, 10, locationListenerGPS);
+                }
+            }
         }
+    }
+    private LocationListener locationListenerGPS = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+           AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+           alert.setTitle("Localizacion")
+           .setMessage("Latitud: " + location.getLatitude() +"\n"+ " Longitud: " + location.getLongitude())
+           .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+               @Override
+               public void onClick(DialogInterface dialogInterface, int i) {
+                   locationManager.removeUpdates(locationListenerGPS);
+               }
+           }).show();
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
+
+    public void setLocal(String txt){
+        System.out.println(txt);
     }
 
     @Override

@@ -1,124 +1,136 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context="edu.cecyt9.ipn.movil_link2band.SecurityMechanism">
 
     <!-- TODO: Update blank fragment layout -->
-    <Switch
-        android:id="@+id/saveMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10mm"
-        android:layout_marginTop="3mm"
-        android:switchPadding="10mm"
-        android:text="Activar modo guardian" />
-
-    <Switch
-        android:id="@+id/blockMode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10mm"
-        android:layout_marginTop="2mm"
-        android:switchPadding="15mm"
-        android:text="Bloqueo" />
-
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="2mm"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/partial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="7mm"
-            android:text="Parcial"
-            android:visibility="invisible" />
-
-        <RadioButton
-            android:id="@+id/total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total"
-            android:visibility="invisible" />
-    </RadioGroup>
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="2mm"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:orientation="vertical">
 
-        <TextView
+        <Switch
+            android:id="@+id/saveMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="3mm"
-            android:text="Duracion de alarma"
-            android:textColor="@android:color/black" />
+            android:layout_gravity="end"
+            android:layout_marginEnd="10mm"
+            android:layout_marginTop="3mm"
+            android:switchPadding="10mm"
+            android:text="Activar modo guardian" />
+
+        <Switch
+            android:id="@+id/blockMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10mm"
+            android:layout_marginTop="2mm"
+            android:switchPadding="15mm"
+            android:text="Bloqueo" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2mm"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/partial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="7mm"
+                android:text="Parcial"
+                android:visibility="invisible" />
+
+            <RadioButton
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total"
+                android:visibility="invisible" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2mm"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="3mm"
+                android:text="Duracion de alarma"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/duracion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="1 minuto" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2mm">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="5mm"
+                android:text="Tono de alrma"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/tone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="SEleccionar tono" />
+        </LinearLayout>
 
         <Button
-            android:id="@+id/duracion"
+            android:id="@+id/WriteMsj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2mm"
             android:background="@color/white"
-            android:text="1 minuto" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="2mm">
+            android:text="Escribe un mensaje de alerta" />
 
         <TextView
+            android:id="@+id/msjInScreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="5mm"
-            android:text="Tono de alrma"
-            android:textColor="@android:color/black" />
+            android:layout_gravity="center"
+            android:layout_marginTop="1mm"
+            android:text="Mensaje en pantalla"
+            android:textAlignment="center"
+            android:textColor="@color/gray"
+            android:textSize="18dp" />
 
         <Button
-            android:id="@+id/tone"
-            android:layout_width="wrap_content"
+            android:id="@+id/bloquear"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:text="SEleccionar tono" />
+            android:layout_marginTop="5mm"
+            android:background="@color/colorCancelRED"
+            android:text="Bloquer" />
+
+        <Button
+            android:id="@+id/localizar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2mm"
+            android:text="Localizar"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/WriteMsj"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/white"
-        android:layout_marginTop="2mm"
-        android:layout_height="wrap_content"
-        android:text="Escribe un mensaje de alerta" />
-
-    <TextView
-        android:id="@+id/msjInScreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Mensaje en pantalla"
-        android:layout_marginTop="1mm"
-        android:textSize="18dp"
-        android:textAlignment="center"
-        android:textColor="@color/gray" />
-
-    <Button
-        android:id="@+id/bloquear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5mm"
-        android:text="Bloquer"
-        android:background="@color/colorCancelRED"/>
-
-</LinearLayout>
+</ScrollView>
