@@ -1,0 +1,9 @@
+<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-policies>
+        <limit-password /><!--Reglas de contrasenia-->
+        <watch-login /><!--monitorea intentos de desbloqueo de pantalla-->
+        <reset-password /><!--Cambiar el bloqueo de pantalla-->
+        <force-lock /> <!--Controla como y cuando se bloquea la pantalla-->
+        <!--<wipe-data />--><!--Borrar datos sin avisar-->
+    </uses-policies>
+</device-admin>

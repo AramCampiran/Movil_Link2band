@@ -31,37 +31,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal"
-        android:layout_marginTop="2mm">
+        android:layout_marginTop="2mm"
+        android:orientation="horizontal">
+
         <RadioButton
             android:id="@+id/partial"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Parcial"
             android:layout_marginEnd="7mm"
-            android:visibility="invisible"/>
+            android:text="Parcial"
+            android:visibility="invisible" />
 
         <RadioButton
             android:id="@+id/total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Total"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
     </RadioGroup>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="2mm">
+        android:layout_marginTop="2mm"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingEnd="3mm"
             android:text="Duracion de alarma"
-            android:textColor="@android:color/black"
-            android:paddingEnd="3mm"/>
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/duracion"
@@ -76,11 +77,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="2mm">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tono de alrma"
             android:paddingEnd="5mm"
+            android:text="Tono de alrma"
             android:textColor="@android:color/black" />
 
         <Button
@@ -88,24 +90,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:text="SEleccionar tono"/>
+            android:text="SEleccionar tono" />
     </LinearLayout>
 
-        <Button
-            android:id="@+id/msj"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="2mm"
-            android:background="@color/white"
-            android:text="Escribe un mensaje de alerta"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/gray"
-            android:textAlignment="center"
-            android:text="Mensaje en pantalla"/>
+    <Button
+        android:id="@+id/WriteMsj"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:layout_marginTop="2mm"
+        android:layout_height="wrap_content"
+        android:text="Escribe un mensaje de alerta" />
 
+    <TextView
+        android:id="@+id/msjInScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Mensaje en pantalla"
+        android:layout_marginTop="1mm"
+        android:textSize="18dp"
+        android:textAlignment="center"
+        android:textColor="@color/gray" />
+
+    <Button
+        android:id="@+id/bloquear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5mm"
+        android:text="Bloquer"
+        android:background="@color/colorCancelRED"/>
 
 </LinearLayout>

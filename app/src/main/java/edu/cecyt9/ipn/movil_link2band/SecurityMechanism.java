@@ -1,6 +1,8 @@
 package edu.cecyt9.ipn.movil_link2band;
 
 import android.app.AlertDialog;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,12 +11,16 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -27,15 +33,16 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link SecurityMechanism#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SecurityMechanism extends Fragment implements View.OnClickListener{
+public class SecurityMechanism extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     View view;
-    Button btnDuracion, btnTone;
-    String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos" };
+    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear;
+    TextView msj;
+    String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
     Switch swBloqueo;
 
@@ -43,6 +50,10 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener{
     final int RQS_RINGTONEPICKER = 1;
     Uri uriRingTone;
     Ringtone ringtone;
+
+    DevicePolicyManager devicePolicyManager;
+    ComponentName component;
+    int REQUEST_ENABLE = 0;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -93,11 +104,16 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener{
         swBloqueo = view.findViewById(R.id.blockMode);
         swBloqueo.setOnClickListener(this);
 
+        msj = view.findViewById(R.id.msjInScreen);
+
         btnTone = view.findViewById(R.id.tone);
         btnTone.setOnClickListener(this);
-
+        btnWriteMsj = view.findViewById(R.id.WriteMsj);
+        btnWriteMsj.setOnClickListener(this);
+        btnBloquear = view.findViewById(R.id.bloquear);
+        btnBloquear.setOnClickListener(this);
         uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        System.out.println("Uri Ringtone: " + uriRingTone);
+
         return view;
     }
 
@@ -124,9 +140,10 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener{
         super.onDetach();
         mListener = null;
     }
+
     @Override
     public void onClick(View v) {
-        if (v.getId() == btnDuracion.getId()){
+        if (v.getId() == btnDuracion.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("btnDuracion de alarma")
                     .setSingleChoiceItems(DuraOptions, Selected, new DialogInterface.OnClickListener() {
@@ -142,34 +159,71 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener{
                             btnDuracion.setText(DuraOptions[Selected]);
                         }
                     }).show();
-        }else if (v.getId() == swBloqueo.getId()){
-            if (swBloqueo.isChecked()){
+        } else if (v.getId() == swBloqueo.getId()) {
+            if (swBloqueo.isChecked()) {
                 rbParcial.setVisibility(View.VISIBLE);
                 rbTotal.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 rbParcial.setVisibility(View.INVISIBLE);
                 rbTotal.setVisibility(View.INVISIBLE);
             }
-        }else if (v.getId() == btnTone.getId()){
-            if(ringtone != null){
+        } else if (v.getId() == btnTone.getId()) {
+            if (ringtone != null) {
                 ringtone.stop();
             }
             ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
             startActivityForResult(intent, RQS_RINGTONEPICKER);
+        } else if (v.getId() == btnWriteMsj.getId()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            final LayoutInflater inflater = getActivity().getLayoutInflater();
+            final View view = inflater.inflate(R.layout.alert, null);
+            alert.setTitle("Mensaje en pantalla")
+                    .setView(view)
+                    .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            EditText txt = view.findViewById(R.id.msj);
+                            if (!txt.getText().toString().equals("")) {
+                                msj.setText("Mensaje: " + txt.getText().toString());
+                            } else {
+                                msj.setText("Debes de escribir un mensaje");
+                            }
+                        }
+                    })
+                    .setNegativeButton("cancelar", null).show();
+        }else if (v.getId() == btnBloquear.getId()){
+            devicePolicyManager = (DevicePolicyManager) getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
+            component = new ComponentName(getContext(), Darclass.class);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setMessage("Esta seguro de bloquer")
+                    .setPositiveButton("si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            if (!devicePolicyManager.isAdminActive(component)){
+                                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
+                                startActivityForResult(intent, REQUEST_ENABLE);
+                            }else{
+                                devicePolicyManager.lockNow();
+                            }
+                        }
+                    })
+                    .setNegativeButton("nel", null).show();
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RQS_RINGTONEPICKER && resultCode == RESULT_OK){
+        if (requestCode == RQS_RINGTONEPICKER && resultCode == RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             ringtone = RingtoneManager.getRingtone(getContext(), uri);
             btnTone.setText(ringtone.getTitle(getContext()));
+        }else if (REQUEST_ENABLE == requestCode){
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
 
 
     /**

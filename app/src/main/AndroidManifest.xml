@@ -21,6 +21,20 @@
             android:label="@string/title_activity_principal"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".RegistroActivity"></activity>
+
+        <receiver
+            android:name=".Darclass"
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/my_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
     </application>
+
+
 
 </manifest>
