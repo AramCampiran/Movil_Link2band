@@ -7,4 +7,8 @@ import android.app.admin.DeviceAdminReceiver;
  */
 
 public class Darclass extends DeviceAdminReceiver {
+    public Darclass(){
+        System.out.println("Que onda prro");
+    }
+
 }
