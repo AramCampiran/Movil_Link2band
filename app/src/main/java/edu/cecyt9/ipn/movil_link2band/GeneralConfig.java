@@ -130,6 +130,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     })
                     .setNegativeButton("cancelar", null).show();
         } else if (v.getId() == btnSave.getId()) {
+
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("¡Exito!")
                     .setMessage("Cambios guardados")
