@@ -133,7 +133,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
             alert.setTitle("¡Exito!")
-                    .setMessage("Cambios guardados")
+                    .setMessage("un pequenio cambio")
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
