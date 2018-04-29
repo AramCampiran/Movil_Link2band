@@ -36,7 +36,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     Intent intent;
 
     View view;
-    Button ward;
+    Button btnSave;
     Button btnDelete;
 
     private OnFragmentInteractionListener mListener;
@@ -77,23 +77,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_general_config, container, false);
-        ward = view.findViewById(R.id.save);
-        ward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                alert.setTitle("¡Exito!")
-                .setMessage("Cambios guardados")
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent main = new Intent(getContext(), MainActivity.class);
-                        startActivity(main);
-                    }
-                }).show();
-            }
-        });
-
+        btnSave = view.findViewById(R.id.save);
+        btnSave.setOnClickListener(this);
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
         return view;
@@ -144,37 +129,16 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                         }
                     })
                     .setNegativeButton("cancelar", null).show();
-        }
+        } else if (v.getId() == btnSave.getId()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+            alert.setTitle("¡Exito!")
+                    .setMessage("Cambios guardados")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-    }
-    public class AuxForWS extends WS_Cliente {
-
-        public AuxForWS() {
-            super(getString(R.string.BajaMethod), view.getContext());
-            super.execute(getString(R.string.UserName),.getText().toString().trim(),
-                    getString(R.string.Pass), pass.getText().toString().trim());
-        }
-
-        @Override
-        public void OnSuccessfulConnectionAttempt(Context context) {
-
-            String id = intent.getStringExtra("nom");
-
-            if (Boolean.parseBoolean(super.Results[0])) {
-                Intent intent = new Intent(context, principal.class);
-                intent.putExtra("nom", user.getText().toString());
-                startActivity(intent);
-            } else {
-                android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(context);
-                alert.setTitle("Problema al iniciar sesión")
-                        .setMessage(super.Results[1])
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                user.requestFocus();
-                            }
-                        }).show();
-            }
+                        }
+                    }).show();
         }
 
     }
