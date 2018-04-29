@@ -27,7 +27,9 @@ public class principal extends AppCompatActivity
 
     String nom;
     TextView usuario;
+    String id;
 
+    Intent intent = getIntent();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,7 @@ public class principal extends AppCompatActivity
         Fragment fragment = new SecurityMechanism();
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
-
+        id = String.valueOf(intent.getStringExtra("id"));
     }
 
     @Override
@@ -90,7 +92,7 @@ public class principal extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            finish();
+            startActivity(new Intent(this, MainActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
@@ -119,7 +121,7 @@ public class principal extends AppCompatActivity
                     .setPositiveButton("si", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            finish();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();
         }

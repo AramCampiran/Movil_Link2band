@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+
+import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 
 /**
@@ -21,7 +24,7 @@ import android.widget.Button;
  * Use the {@link GeneralConfig#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GeneralConfig extends Fragment {
+public class GeneralConfig extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,9 +33,11 @@ public class GeneralConfig extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    Intent intent;
 
     View view;
     Button ward;
+    Button btnDelete;
 
     private OnFragmentInteractionListener mListener;
 
@@ -88,6 +93,9 @@ public class GeneralConfig extends Fragment {
                 }).show();
             }
         });
+
+        btnDelete = view.findViewById(R.id.delete);
+        btnDelete.setOnClickListener(this);
         return view;
     }
 
@@ -113,6 +121,62 @@ public class GeneralConfig extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == btnDelete.getId()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            final LayoutInflater inflater = getActivity().getLayoutInflater();
+            final View view = inflater.inflate(R.layout.alert, null);
+            alert.setTitle("Eliminar cuenta")
+                    .setView(view)
+                    .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            EditText txt = view.findViewById(R.id.msj);
+                            txt.setHint("Escribe tu contraseña");
+                            if (!txt.getText().toString().equals("")) {
+
+                            } else {
+
+                            }
+                        }
+                    })
+                    .setNegativeButton("cancelar", null).show();
+        }
+
+    }
+    public class AuxForWS extends WS_Cliente {
+
+        public AuxForWS() {
+            super(getString(R.string.BajaMethod), view.getContext());
+            super.execute(getString(R.string.UserName),.getText().toString().trim(),
+                    getString(R.string.Pass), pass.getText().toString().trim());
+        }
+
+        @Override
+        public void OnSuccessfulConnectionAttempt(Context context) {
+
+            String id = intent.getStringExtra("nom");
+
+            if (Boolean.parseBoolean(super.Results[0])) {
+                Intent intent = new Intent(context, principal.class);
+                intent.putExtra("nom", user.getText().toString());
+                startActivity(intent);
+            } else {
+                android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(context);
+                alert.setTitle("Problema al iniciar sesión")
+                        .setMessage(super.Results[1])
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                user.requestFocus();
+                            }
+                        }).show();
+            }
+        }
+
     }
 
     /**

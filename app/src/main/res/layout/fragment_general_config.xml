@@ -62,4 +62,13 @@
         android:backgroundTint="@color/colorPrimary"
         android:textColor="@android:color/white"
         android:text="Guardar"/>
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2mm"
+        android:text="Eliminar cuenta"
+        android:textColor="@color/white"
+        android:background="@color/colorCancelRED"/>
 </LinearLayout>

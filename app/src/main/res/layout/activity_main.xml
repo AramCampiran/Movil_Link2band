@@ -6,91 +6,135 @@
     android:layout_height="match_parent"
     tools:context="edu.cecyt9.ipn.movil_link2band.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="354dp"
-        android:layout_height="334dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Log_userLayout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:padding="10dp"
+        android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/title"
+        <AutoCompleteTextView
+            android:id="@+id/Log_userInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-smallcaps"
-            android:text="@string/header_activity_main"
-            android:textAlignment="center"
-            android:textColor="@android:color/black"
-            android:textSize="30sp" />
-
-        <EditText
-            android:id="@+id/et_User"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10mm"
-            android:ems="10"
-            android:hint="Nombre de Usuario"
+            android:hint="@string/prompt_username"
             android:inputType="textPersonName"
-            android:textAlignment="center" />
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/Log_passLayout"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintEnd_toEndOf="@+id/Log_userLayout"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/Log_userLayout"
+        app:layout_constraintTop_toBottomOf="@+id/Log_userLayout">
 
         <EditText
-            android:id="@+id/et_Pass"
+            android:id="@+id/Log_passInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5mm"
-            android:ems="10"
-            android:hint="Contraseña"
+            android:hint="@string/prompt_password"
             android:inputType="textPassword"
-            android:textAlignment="center" />
+            android:maxLines="1"
+            android:singleLine="true" />
 
-        <Button
-            android:id="@+id/btn_Enter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5mm"
-            android:backgroundTint="@color/colorPrimary"
-            android:onClick="onClick"
-            android:text="ENTRAR"
-            android:textColor="@android:color/white" />
-
-    </LinearLayout>
+    </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_temp"
-        android:layout_width="111dp"
-        android:layout_height="41dp"
+        android:id="@+id/Log_signBtn"
+        style="?android:textAppearanceSmall"
+        android:layout_width="180dp"
+        android:layout_height="52dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:onClick="onClick"
-        android:text="ENTRAR temp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_registro"
-        android:layout_width="191dp"
-        android:layout_height="31dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="36dp"
-        android:fontFamily="sans-serif-smallcaps"
+        android:layout_marginTop="68dp"
+        android:backgroundTint="@color/colorPrimary"
         android:onClick="onClick"
-        android:text="@string/tv1_activity_main"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp"
-        android:textStyle="normal|bold"
+        android:text="@string/action_sign_in"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/Log_passLayout"
+        app:layout_constraintStart_toStartOf="@+id/Log_passLayout"
+        app:layout_constraintTop_toBottomOf="@+id/Log_passLayout" />
+
+    <Button
+        android:id="@+id/btn_Temp"
+        android:layout_width="80dp"
+        android:layout_height="39dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="onClick"
+        android:text="@string/prompt_entrar"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/Log_footer"
+        android:layout_width="0dp"
+        android:layout_height="96dp"
+        android:background="@color/colorGrisClaro"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/Log_toregisterTextV"
+            android:layout_width="154dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:clickable="false"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical|center_horizontal"
+            android:onClick="onClick"
+            android:text="@string/action_register"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/log_torecoveryTextV"
+            android:layout_width="181dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:clickable="false"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical|center_horizontal"
+            android:onClick="onClick"
+            android:text="@string/action_recovery"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="170dp"
+        android:layout_height="29dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/label_register"
+        android:textColor="@color/colorGrisDark"
+        android:textSize="16sp"
+        android:textStyle="normal|bold"
+        app:layout_constraintBottom_toTopOf="@+id/Log_footer"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
