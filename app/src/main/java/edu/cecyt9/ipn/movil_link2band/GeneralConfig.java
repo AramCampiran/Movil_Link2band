@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 
@@ -36,8 +37,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     Intent intent;
 
     View view;
-    Button btnSave;
-    Button btnDelete;
+    Button btnSave, btnDelete;
+    EditText txtNom;
 
     private OnFragmentInteractionListener mListener;
 
@@ -81,6 +82,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         btnSave.setOnClickListener(this);
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
+        txtNom = view.findViewById(R.id.nom);
         return view;
     }
 
@@ -130,16 +132,18 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     })
                     .setNegativeButton("cancelar", null).show();
         } else if (v.getId() == btnSave.getId()) {
-
-            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("¡Exito!")
-                    .setMessage("un pequenio cambio")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    }).show();
+            long id = 0;
+            try {
+                DatabaseHelper DB = new DatabaseHelper(getActivity());
+                id = DB.insertNote(txtNom.getText().toString());
+            } catch (Exception e) {
+                System.out.println("Error: " + e);
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Prueba")
+                    .setMessage(String.valueOf(id))
+                    .setCancelable(true)
+            .show();
         }
 
     }
