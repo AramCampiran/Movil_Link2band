@@ -54,9 +54,8 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                     }
                 }
             };
-            String modelo = Build.MANUFACTURER + " " + DeviceName.getDeviceName();
             ws.execute(new String[]{getString(R.string.UserName), getString(R.string.Pass), getString(R.string.Model), getString(R.string.Mail)},
-                    new String[]{user.getText().toString(), pass.getText().toString(), modelo, mail.getText().toString()});
+                    new String[]{user.getText().toString(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});
         }
     }
 
