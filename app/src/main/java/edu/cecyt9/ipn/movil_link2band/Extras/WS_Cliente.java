@@ -9,18 +9,21 @@ import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import edu.cecyt9.ipn.movil_link2band.MainActivity;
+
 
 @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-public class WS_Cliente extends AsyncTask<String, String, Boolean> {
+public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
 
     private static final String NAMESPACE = "http://WebServer/";
-    private static String URL = "http://192.168.20.59:8080/Server_L2B/WebServer?WSDL";
+    private static String URL = "http://192.168.0.6:8080/Server_L2B/WebServer?WSDL";
     private static String METHODNAME;
     private static String SOAP_ACTION;
     private Context context;
@@ -52,10 +55,10 @@ public class WS_Cliente extends AsyncTask<String, String, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(String... params) {
+    protected Boolean doInBackground(String[]... params) { //DEBEN ser 2 arreglos, uno de "nombres" y otro de valores
         SoapObject request = new SoapObject(NAMESPACE, METHODNAME);
-        for (int i = 1; i < params.length; i += 2) {
-            request.addProperty(params[i - 1], params[i]);
+        for (int i = 0; i < params[0].length; i++) {
+            request.addProperty(params[0][i], params[1][i]);
         }
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = false;
@@ -81,13 +84,13 @@ public class WS_Cliente extends AsyncTask<String, String, Boolean> {
         super.onPostExecute(result);
         PD.dismiss();
         if (result) {
-            OnSuccessfulConnectionAttempt(context);
+            onSuccessfulConnectionAttempt(context);
         } else {
-            OnFailedConnectionAttempt(context);
+            onFailedConnectionAttempt(context);
         }
     }
 
-    private void OnFailedConnectionAttempt(Context context) {
+    private void onFailedConnectionAttempt(Context context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("Ha ocurrido un error")
                 .setMessage("No ha sido posible conectarse\nRevisa tu conexión a internet")
@@ -98,6 +101,5 @@ public class WS_Cliente extends AsyncTask<String, String, Boolean> {
                 }).show();
     }
 
-    public void OnSuccessfulConnectionAttempt(Context context) {
-    }
+    public void onSuccessfulConnectionAttempt(Context context) {}
 }
