@@ -136,14 +136,15 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             try {
                 DatabaseHelper DB = new DatabaseHelper(getActivity());
                 id = DB.insertNote(txtNom.getText().toString());
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Prueba")
+                        .setMessage(String.valueOf(id))
+                        .setCancelable(true)
+                        .show();
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Prueba")
-                    .setMessage(String.valueOf(id))
-                    .setCancelable(true)
-            .show();
         }
 
     }

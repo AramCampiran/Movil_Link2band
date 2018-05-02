@@ -38,23 +38,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
         //Altas
-    public long insertNote(String note) {
-        // get writable database as we want to write data
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Boolean insertNote(String note) {
+        try {
+            // get writable database as we want to write data
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            // `id` and `timestamp` will be inserted automatically.
+            // no need to add them
+            values.put(Comands.COLUMN_NOTE, note);
 
-        ContentValues values = new ContentValues();
-        // `id` and `timestamp` will be inserted automatically.
-        // no need to add them
-        values.put(Comands.COLUMN_NOTE, note);
-
-        // insert row
-        long id = db.insert(Comands.TABLE_NAME, null, values);
-
-        // close db connection
-        db.close();
-
+            // insert row
+            db.insert(Comands.TABLE_NAME, null, values);
+            // close db connection
+            db.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
         // return newly inserted row id
-        return id;
+        return true;
     }
     //Consultas
     public Comands getNote(long id) {

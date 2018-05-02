@@ -20,7 +20,7 @@ public class Comands {
             "CREATE TABLE " + TABLE_NAME + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + COLUMN_NOTE + " TEXT,"
-                    + ")";
+                    + ");";
 
 
     public Comands(int id, String note) {
