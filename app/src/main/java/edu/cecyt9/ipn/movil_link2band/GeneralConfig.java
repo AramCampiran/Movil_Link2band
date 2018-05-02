@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
@@ -37,9 +39,10 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     Intent intent;
 
     View view;
-    Button btnSave, btnDelete;
+    Button btnSave, btnDelete, btnGetId;
     EditText txtNom;
 
+    Long id;
     private OnFragmentInteractionListener mListener;
 
     public GeneralConfig() {
@@ -83,6 +86,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
         txtNom = view.findViewById(R.id.nom);
+        btnGetId = view.findViewById(R.id.getId);
+        btnGetId.setOnClickListener(this);
         return view;
     }
 
@@ -132,19 +137,19 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     })
                     .setNegativeButton("cancelar", null).show();
         } else if (v.getId() == btnSave.getId()) {
-            long id = 0;
             try {
                 DatabaseHelper DB = new DatabaseHelper(getActivity());
                 id = DB.insertNote(txtNom.getText().toString());
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Prueba")
-                        .setMessage(String.valueOf(id))
-                        .setCancelable(true)
-                        .show();
+                System.out.println(id);
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }
+
+        } else if (v.getId() ==  btnGetId.getId()) {
+            DatabaseHelper DB = new DatabaseHelper(getActivity());
+            Comands comands = DB.getNote(id);
+            System.out.println(comands.toString());
+
         }
 
     }

@@ -37,25 +37,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Create tables again
         onCreate(sqLiteDatabase);
     }
+
         //Altas
-    public Boolean insertNote(String note) {
-        try {
+    public Long insertNote(String note) {
             // get writable database as we want to write data
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
-            // `id` and `timestamp` will be inserted automatically.
-            // no need to add them
             values.put(Comands.COLUMN_NOTE, note);
-
             // insert row
-            db.insert(Comands.TABLE_NAME, null, values);
+            Long id = db.insert(Comands.TABLE_NAME, null, values) - 1;
             // close db connection
             db.close();
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
+            return id;
         // return newly inserted row id
-        return true;
     }
     //Consultas
     public Comands getNote(long id) {
@@ -81,10 +75,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return comands;
     }
 
+
+
     public int getNotesCount() {
-        String countQuery = "SELECT  * FROM " + Comands.TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Comands.TABLE_NAME, null);
 
         int count = cursor.getCount();
         cursor.close();

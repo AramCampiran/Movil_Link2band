@@ -19,10 +19,10 @@ public class Comands {
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + "("
                     + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    + COLUMN_NOTE + " TEXT,"
-                    + ");";
+                    + COLUMN_NOTE + " TEXT"
+                    + ")";
 
-
+    public Comands(){}
     public Comands(int id, String note) {
         this.id = id;
         this.note = note;
