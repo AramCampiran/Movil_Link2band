@@ -39,36 +39,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
         //Altas
-    public Long insertNote(String note) {
+    public Boolean insertID(String id) {
             // get writable database as we want to write data
+        try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put(Comands.COLUMN_NOTE, note);
+            values.put(Comands.COLUMN_ID, id);
             // insert row
-            Long id = db.insert(Comands.TABLE_NAME, null, values) - 1;
+            db.insert(Comands.TABLE_NAME, null, values);
             // close db connection
             db.close();
-            return id;
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return false;
+        }
+
         // return newly inserted row id
     }
     //Consultas
-    public Comands getNote(long id) {
+    public Comands getNote() {
         // get readable database as we are not inserting anything
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(Comands.TABLE_NAME,
-                new String[]{Comands.COLUMN_ID, Comands.COLUMN_NOTE},
-                Comands.COLUMN_ID + "=?",
-                new String[]{String.valueOf(id)}, null, null, null, null);
+                new String[]{Comands.COLUMN_ID},
+                Comands.COLUMN_ID,
+                null, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
         // prepare Comands object
         Comands comands = new Comands(
-                cursor.getInt(cursor.getColumnIndex(Comands.COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndex(Comands.COLUMN_NOTE)));
-
+                cursor.getInt(cursor.getColumnIndex(Comands.COLUMN_ID)));
         // close the db connection
         cursor.close();
 
@@ -77,34 +81,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public int getNotesCount() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Comands.TABLE_NAME, null);
-
-        int count = cursor.getCount();
-        cursor.close();
-
-
-        // return count
-        return count;
-    }
     //Cambios
-    public int updateNote(Comands note) {
+    public void update(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Comands.COLUMN_NOTE, note.getNote());
+        values.put(Comands.COLUMN_ID, id);
 
         // updating row
-        return db.update(Comands.TABLE_NAME, values, Comands.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(note.getId())});
+        db.update(Comands.TABLE_NAME, values, Comands.COLUMN_ID + " = ?", new String[]{id});
+        db.close();
     }
 
     //Bajas
-    public void deleteNote(Comands note) {
+    public void delete() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(Comands.TABLE_NAME, Comands.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(note.getId())});
+                new String[]{Comands.COLUMN_ID});
         db.close();
     }
 

@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GeneralConfig.OnFragmentInteractionListener,
@@ -64,6 +66,9 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
         id = String.valueOf(intent.getStringExtra("id"));
+        DatabaseHelper DB = new DatabaseHelper(this);
+        DB.delete();
+        DB.insertID(id);
     }
 
     @Override

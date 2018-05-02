@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.jaredrummler.android.device.DeviceName;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -44,6 +47,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
     Long id;
     private OnFragmentInteractionListener mListener;
+
+    DatabaseHelper DB;
 
     public GeneralConfig() {
         // Required empty public constructor
@@ -88,6 +93,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         txtNom = view.findViewById(R.id.nom);
         btnGetId = view.findViewById(R.id.getId);
         btnGetId.setOnClickListener(this);
+        DB = new DatabaseHelper(getActivity());
         return view;
     }
 
@@ -137,22 +143,37 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     })
                     .setNegativeButton("cancelar", null).show();
         } else if (v.getId() == btnSave.getId()) {
-            try {
-                DatabaseHelper DB = new DatabaseHelper(getActivity());
-                id = DB.insertNote(txtNom.getText().toString());
-                System.out.println(id);
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
-            }
-
-        } else if (v.getId() ==  btnGetId.getId()) {
-            DatabaseHelper DB = new DatabaseHelper(getActivity());
-            Comands comands = DB.getNote(id);
-            System.out.println(comands.toString());
+            WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
+                @Override
+                public void onSuccessfulConnectionAttempt(Context context) {
+                    if (Boolean.parseBoolean(super.Results[0])) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                        alert.setTitle("Datos inválidos")
+                                .setMessage(super.Results[1])
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                    }
+                                }).show();
+                    } else {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                        alert.setTitle("Datos inválidos")
+                                .setMessage(super.Results[1])
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                    }
+                                }).show();
+                    }
+                }
+            };
+            Comands comands = DB.getNote();
+            /*ws.execute(new String[]{"ID", "Parameter", "VerificationPass", "ParamName"},
+                    new String[]{comands.getId(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});*/
 
         }
-
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
