@@ -1,14 +1,15 @@
 package edu.cecyt9.ipn.movil_link2band;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (view.getId() == R.id.Log_signBtn) {
             Validacion val = new Validacion();
             if (val.LogIn_Val(user, pass)) {
-                @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
+                WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
@@ -68,11 +69,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (view.getId() == R.id.btn_Temp) {
             Intent intent = new Intent(this, principal.class);
             intent.putExtra("nom", "Juanito");
-            intent.putExtra("id", "1");
             startActivity(intent);
-        } else if (view.getId() == R.id.Log_toregisterTextV) {
+        } else if (view.getId() == R.id.Log_registroTxtV) {
             Intent intent = new Intent(this, RegistroActivity.class);
             startActivity(intent);
+        } else if (view.getId() == R.id.Log_recoveryTxtV) {
+
+            final EditText mailInput = new EditText(this);
+            mailInput.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            mailInput.setHint(getString(R.string.prompt_email));
+            final TextInputLayout Layout = new TextInputLayout(this);
+            Layout.addView(mailInput);
+            Layout.setPadding(20, 10, 20, 0);
+
+            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Recuperación de contraseña")
+                    .setMessage("Introduce tu correo para restablecer tu contraseña")
+                    .setView(Layout)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(final DialogInterface dialogInterface, int i) {
+                            if (mailInput.getText().toString().isEmpty()) {
+                                Toast.makeText(MainActivity.this, "Pero ps escribe algo >:v\n¿así cómo?", Toast.LENGTH_SHORT).show();
+                            } else {
+                                WS_Cliente ws = new WS_Cliente(getString(R.string.RecuperacionMethod), MainActivity.this) {
+                                    @Override
+                                    public void onSuccessfulConnectionAttempt(Context context) {
+                                        if (Boolean.parseBoolean(super.Results[0])) {
+                                            dialogInterface.cancel();
+                                        } else {
+                                            mailInput.requestFocus();
+                                        }
+                                        Toast.makeText(context, super.Results[1], Toast.LENGTH_LONG).show();
+                                    }
+                                };
+                                ws.execute(new String[]{getString(R.string.Mail)},
+                                        new String[]{mailInput.getText().toString()});
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    }).show();
         }
     }
 }

@@ -111,7 +111,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         return view;
     }
     private void getValues() {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("GetResultado", getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 if (Boolean.parseBoolean(super.Results[0])) {
@@ -249,7 +249,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                 }
             }
         });
-        deleteDialog.setNegativeButton("cacnelar", new DialogInterface.OnClickListener() {
+        deleteDialog.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 nuevo.setText("");
