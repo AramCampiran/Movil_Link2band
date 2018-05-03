@@ -11,23 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar datos"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center"
+            android:textSize="5mm"
+            android:fontFamily="monospace" />
+
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:columnCount="2"
+            android:layout_marginTop="5mm"
             android:layout_marginRight="2mm"
             android:layout_marginLeft="2mm">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Editar datos"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center"
-                android:textSize="5mm"
-                android:fontFamily="monospace"
-                android:layout_columnSpan="2"
-                android:layout_column="0"
-                android:layout_row="0"/>
 
             <TextView
                 android:id="@+id/name"
@@ -94,42 +93,12 @@
                 android:layout_row="3"
                 android:src="@drawable/ic_edit"/>
 
-            <TextView
-                android:id="@+id/passwordX2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2mm"
-                android:layout_gravity="start"
-                android:text="Repita contraseña"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18dp"
-                android:inputType="textPersonName"
-                android:layout_column="0"
-                android:layout_row="4"/>
-
-            <ImageButton
-                android:id="@+id/editPass2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_column="1"
-                android:layout_row="4"
-                android:src="@drawable/ic_edit"/>
         </GridLayout>
-        <Button
-            android:id="@+id/save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5mm"
-            android:backgroundTint="@color/colorPrimary"
-            android:textColor="@android:color/white"
-            android:text="Guardar"/>
-
         <Button
             android:id="@+id/delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8mm"
+            android:layout_marginTop="30mm"
             android:text="Eliminar cuenta"
             android:textColor="@color/white"
             android:backgroundTint="@color/colorCancelRED"/>

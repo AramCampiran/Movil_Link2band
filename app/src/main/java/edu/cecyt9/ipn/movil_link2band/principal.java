@@ -35,7 +35,6 @@ public class principal extends AppCompatActivity
     TextView usuario;
     String id;
     DatabaseHelper conect;
-    Intent intent = getIntent();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

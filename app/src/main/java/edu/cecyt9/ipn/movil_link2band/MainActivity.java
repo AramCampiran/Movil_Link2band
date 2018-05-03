@@ -1,5 +1,6 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (view.getId() == R.id.Log_signBtn) {
             Validacion val = new Validacion();
             if (val.LogIn_Val(user, pass)) {
-                WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
+                @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {

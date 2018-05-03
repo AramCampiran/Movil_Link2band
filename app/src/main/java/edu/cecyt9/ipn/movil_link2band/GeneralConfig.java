@@ -2,6 +2,7 @@ package edu.cecyt9.ipn.movil_link2band;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,7 +47,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     Intent intent;
 
     View view;
-    Button btnSave, btnDelete;
+    Button btnDelete;
     ImageButton editNom, editMail, editPass, editPass2;
     TextView txtName, txtMail, txtPass, txtPass2;
 
@@ -90,8 +92,6 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_general_config, container, false);
-        btnSave = view.findViewById(R.id.save);
-        btnSave.setOnClickListener(this);
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
         DB = new DatabaseHelper(getActivity());
@@ -102,13 +102,9 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         editMail.setOnClickListener(this);
         editPass = view.findViewById(R.id.editPass);
         editPass.setOnClickListener(this);
-        editPass2 = view.findViewById(R.id.editPass2);
-        editPass2.setOnClickListener(this);
 
         txtName = view.findViewById(R.id.name);
         txtMail = view.findViewById(R.id.mail);
-        txtPass = view.findViewById(R.id.password);
-        txtPass2 = view.findViewById(R.id.passwordX2);
         return view;
     }
 
@@ -142,13 +138,13 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         if (v.getId() == btnDelete.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
-            final View view = inflater.inflate(R.layout.alert, null);
-            alert.setTitle("Eliminar cuenta")
-                    .setView(view)
+            final View vi = inflater.inflate(R.layout.alert, null);
+            alert.setTitle("Verifica contraseña")
+                    .setView(vi)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            EditText txt = view.findViewById(R.id.msj);
+                            EditText txt = vi.findViewById(R.id.msj);
                             txt.setHint("contraseña actual");
                             if (!txt.getText().toString().equals("")) {
                                 contra[0] = txt.getText().toString();
@@ -160,10 +156,76 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     })
                     .setNegativeButton("cancelar", null).show();
 
-        } else if (v.getId() == btnSave.getId()) {
-
-
+        } else if (v.getId() == editNom.getId()) {
+            txtName.setText(alert("Nuevo nombre", "Nombre"));
+        } else if (v.getId() == editMail.getId()) {
+            alert("Nuevo correo", "Correo");
+        } else if (v.getId() == editPass.getId()) {
+            alert("Nueva contraseña", "Pass");
         }
+    }
+
+    private String alert(String hint, final String campo) {
+        final String[] cambio = {""};
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        final View deleteDialogView = factory.inflate(R.layout.alert, null);
+        final AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getActivity());
+        deleteDialog.setView(deleteDialogView);
+        deleteDialog.setTitle("Guardar cambios");
+        deleteDialog.setMessage("Por favor escribe tu contraseña para verificar tu identidad");
+        final EditText txt = deleteDialogView.findViewById(R.id.msj);
+        txt.setHint("Contraseña actual");
+        final EditText nuevo = deleteDialogView.findViewById(R.id.cambio);
+        nuevo.setVisibility(View.VISIBLE);
+        nuevo.setHint(hint);
+        deleteDialog.setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (!nuevo.getText().toString().equals("") && !txt.getText().toString().equals("")) {
+                    saveChanges(nuevo.getText().toString(), txt.getText().toString(), campo);
+                    cambio[0] = nuevo.getText().toString();
+                }
+            }
+        });
+        deleteDialog.setNegativeButton("cacnelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                nuevo.setText("");
+                txt.setText("");
+            }
+        });
+        deleteDialog.show();
+        return cambio[0];
+    }
+
+    private void saveChanges(String parameter, String verificationPass, String paramName) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Editar datos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
+                                }
+                            }).show();
+                } else {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Datos inválidos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            }).show();
+                }
+            }
+        };
+        ws.execute(new String[]{"ID", "Parameter", "VerificationPass", "ParamName"},
+                new String[]{Comands.getID(), parameter, verificationPass, paramName});
     }
 
     private void elimina(String contra) {
