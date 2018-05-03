@@ -152,44 +152,49 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                             txt.setHint("contraseña actual");
                             if (!txt.getText().toString().equals("")) {
                                 contra[0] = txt.getText().toString();
+                                elimina(contra[0]);
                             } else {
                                 contra[0] = "";
                             }
                         }
                     })
                     .setNegativeButton("cancelar", null).show();
-            @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.BajaMethod), getActivity()) {
-                @Override
-                public void onSuccessfulConnectionAttempt(Context context) {
-                    if (Boolean.parseBoolean(super.Results[0])) {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                        alert.setTitle("Eliminar usuario")
-                                .setMessage(super.Results[1])
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        startActivity(new Intent(getActivity(), MainActivity.class));
-                                    }
-                                }).show();
-                    } else {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                        alert.setTitle("Datos inválidos")
-                                .setMessage(super.Results[1])
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                    }
-                                }).show();
-                    }
-                }
-            };
-            ws.execute(new String[]{"ID", "Pass"},
-                    new String[]{Comands.getID(), contra[0]});
 
         } else if (v.getId() == btnSave.getId()) {
 
 
         }
+    }
+
+    private void elimina(String contra) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.BajaMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    alert.setTitle("Eliminar usuario")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
+                                }
+                            }).show();
+                } else {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    alert.setTitle("Datos inválidos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            }).show();
+                }
+            }
+        };
+        ws.execute(new String[]{"ID", "Pass"},
+                new String[]{Comands.getID(), contra});
+
     }
 
 

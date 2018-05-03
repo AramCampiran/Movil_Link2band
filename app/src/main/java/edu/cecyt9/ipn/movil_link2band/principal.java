@@ -70,7 +70,7 @@ public class principal extends AppCompatActivity
         Fragment fragment = new SecurityMechanism();
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
-        id = String.valueOf(intent.getStringExtra("id"));
+        id = intent.getStringExtra("id");
         conect = new DatabaseHelper(this);
         if (!conect.consulta(id)) {
             Long idReturn = conect.alataUSR(id);
