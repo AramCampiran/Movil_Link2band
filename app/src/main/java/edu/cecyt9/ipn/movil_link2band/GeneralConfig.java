@@ -105,7 +105,69 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
         txtName = view.findViewById(R.id.name);
         txtMail = view.findViewById(R.id.mail);
+
+        consulta();
+        getValues();
         return view;
+    }
+    private void getValues() {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Editar datos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
+                                }
+                            }).show();
+                } else {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Datos inválidos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            }).show();
+                }
+            }
+        };
+        ws.execute(new String[]{"ID"},
+                new String[]{Comands.getID()});
+    }
+
+    private void consulta() {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Editar datos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
+                                }
+                            }).show();
+                } else {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Datos inválidos")
+                            .setMessage(super.Results[1])
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            }).show();
+                }
+            }
+        };
+        ws.execute(new String[]{"ID"},
+                new String[]{Comands.getID()});
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -258,6 +320,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                 new String[]{Comands.getID(), contra});
 
     }
+
 
 
     /**
