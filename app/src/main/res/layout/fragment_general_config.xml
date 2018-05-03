@@ -30,7 +30,7 @@
                 android:layout_row="0"/>
 
             <TextView
-                android:id="@+id/nom"
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
@@ -73,7 +73,7 @@
                 android:src="@drawable/ic_edit"/>
 
             <TextView
-                android:id="@+id/pssw"
+                android:id="@+id/password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2mm"
@@ -95,7 +95,7 @@
                 android:src="@drawable/ic_edit"/>
 
             <TextView
-                android:id="@+id/psswX2"
+                android:id="@+id/passwordX2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2mm"

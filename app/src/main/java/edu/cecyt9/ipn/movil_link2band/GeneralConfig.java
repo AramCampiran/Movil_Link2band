@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -43,7 +45,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
     View view;
     Button btnSave, btnDelete, btnGetId;
-    EditText txtNom;
+    ImageButton editNom, editMail, editPass, editPass2;
+    TextView txtName, txtMail, txtPass, txtPass2;
 
     Long id;
     private OnFragmentInteractionListener mListener;
@@ -90,10 +93,22 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         btnSave.setOnClickListener(this);
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
-        txtNom = view.findViewById(R.id.nom);
-        btnGetId = view.findViewById(R.id.getId);
         btnGetId.setOnClickListener(this);
         DB = new DatabaseHelper(getActivity());
+
+        editNom = view.findViewById(R.id.editNom);
+        editNom.setOnClickListener(this);
+        editMail = view.findViewById(R.id.editMail);
+        editMail.setOnClickListener(this);
+        editPass = view.findViewById(R.id.editPass);
+        editPass.setOnClickListener(this);
+        editPass2 = view.findViewById(R.id.editPass2);
+        editPass2.setOnClickListener(this);
+
+        txtName = view.findViewById(R.id.name);
+        txtMail = view.findViewById(R.id.mail);
+        txtPass = view.findViewById(R.id.password);
+        txtPass2 = view.findViewById(R.id.passwordX2);
         return view;
     }
 
