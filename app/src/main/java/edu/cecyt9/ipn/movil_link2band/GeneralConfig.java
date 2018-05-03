@@ -1,5 +1,6 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -137,17 +138,37 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        final String[] contra = new String[1];
         if (v.getId() == btnDelete.getId()) {
-            WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            final LayoutInflater inflater = getActivity().getLayoutInflater();
+            final View view = inflater.inflate(R.layout.alert, null);
+            alert.setTitle("Eliminar cuenta")
+                    .setView(view)
+                    .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            EditText txt = view.findViewById(R.id.msj);
+                            txt.setHint("contraseña actual");
+                            if (!txt.getText().toString().equals("")) {
+                                contra[0] = txt.getText().toString();
+                            } else {
+                                contra[0] = "";
+                            }
+                        }
+                    })
+                    .setNegativeButton("cancelar", null).show();
+            @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.BajaMethod), getActivity()) {
                 @Override
                 public void onSuccessfulConnectionAttempt(Context context) {
                     if (Boolean.parseBoolean(super.Results[0])) {
                         AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                        alert.setTitle("Datos inválidos")
+                        alert.setTitle("Eliminar usuario")
                                 .setMessage(super.Results[1])
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
+                                        startActivity(new Intent(getActivity(), MainActivity.class));
                                     }
                                 }).show();
                     } else {
@@ -162,39 +183,15 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     }
                 }
             };
-/*
-            ws.execute(new String[]{"ID", "Parameter", "VerificationPass", "ParamName"},
-                    new String[]{Comands.getID(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});
-*/
+            ws.execute(new String[]{"ID", "Pass"},
+                    new String[]{Comands.getID(), contra[0]});
 
         } else if (v.getId() == btnSave.getId()) {
-            alert("Hola", "msj");
-            /**/
-            /**/
+
 
         }
     }
 
-    public void alert(String title, final String message){
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-        final LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View view = inflater.inflate(R.layout.alert, null);
-        alert.setTitle(title)
-                .setView(view)
-                .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText txt = view.findViewById(R.id.msj);
-                        txt.setHint(message);
-                        if (!txt.getText().toString().equals("")) {
-
-                        } else {
-
-                        }
-                    }
-                })
-                .setNegativeButton("cancelar", null).show();
-    }
 
     /**
      * This interface must be implemented by activities that contain this
