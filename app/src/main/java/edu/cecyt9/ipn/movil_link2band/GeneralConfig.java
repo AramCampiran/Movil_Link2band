@@ -44,7 +44,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     Intent intent;
 
     View view;
-    Button btnSave, btnDelete, btnGetId;
+    Button btnSave, btnDelete;
     ImageButton editNom, editMail, editPass, editPass2;
     TextView txtName, txtMail, txtPass, txtPass2;
 
@@ -93,7 +93,6 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         btnSave.setOnClickListener(this);
         btnDelete = view.findViewById(R.id.delete);
         btnDelete.setOnClickListener(this);
-        btnGetId.setOnClickListener(this);
         DB = new DatabaseHelper(getActivity());
 
         editNom = view.findViewById(R.id.editNom);
@@ -139,25 +138,6 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         if (v.getId() == btnDelete.getId()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-            final LayoutInflater inflater = getActivity().getLayoutInflater();
-            final View view = inflater.inflate(R.layout.alert, null);
-            alert.setTitle("Eliminar cuenta")
-                    .setView(view)
-                    .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            EditText txt = view.findViewById(R.id.msj);
-                            txt.setHint("Escribe tu contraseña");
-                            if (!txt.getText().toString().equals("")) {
-
-                            } else {
-
-                            }
-                        }
-                    })
-                    .setNegativeButton("cancelar", null).show();
-        } else if (v.getId() == btnSave.getId()) {
             WS_Cliente ws = new WS_Cliente(getString(R.string.CambioMethod), getActivity()) {
                 @Override
                 public void onSuccessfulConnectionAttempt(Context context) {
@@ -182,13 +162,39 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     }
                 }
             };
-            Comands comands = DB.getNote();
-            /*ws.execute(new String[]{"ID", "Parameter", "VerificationPass", "ParamName"},
-                    new String[]{comands.getId(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});*/
+/*
+            ws.execute(new String[]{"ID", "Parameter", "VerificationPass", "ParamName"},
+                    new String[]{Comands.getID(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});
+*/
+
+        } else if (v.getId() == btnSave.getId()) {
+            alert("Hola", "msj");
+            /**/
+            /**/
 
         }
     }
 
+    public void alert(String title, final String message){
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        final LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View view = inflater.inflate(R.layout.alert, null);
+        alert.setTitle(title)
+                .setView(view)
+                .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        EditText txt = view.findViewById(R.id.msj);
+                        txt.setHint(message);
+                        if (!txt.getText().toString().equals("")) {
+
+                        } else {
+
+                        }
+                    }
+                })
+                .setNegativeButton("cancelar", null).show();
+    }
 
     /**
      * This interface must be implemented by activities that contain this

@@ -17,88 +17,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "bdL2B_lite";
-
-
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, Utilidades.TABLE_NAME, null, DATABASE_VERSION);
     }
 
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(Comands.CREATE_TABLE);
+    public void onCreate(SQLiteDatabase DB) {
+        DB.execSQL(Utilidades.CREATE_TABLE);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase DB, int versionAntigua, int versionNueva) {
         // Drop older table if existed
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + Comands.TABLE_NAME);
+        DB.execSQL("DROP TABLE IF EXISTS " + Utilidades.TABLE_NAME);
         // Create tables again
-        onCreate(sqLiteDatabase);
+        onCreate(DB);
     }
 
-        //Altas
-    public Boolean insertID(String id) {
-            // get writable database as we want to write data
+    public Long alataUSR(String id) {
+        SQLiteDatabase DB = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Utilidades.CAMPO_ID, id);
+        Long idResult = DB.insert(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID, values);
+        DB.close();
+        System.out.println("usuario registrado con exito");
+        return idResult;
+    }
+
+    public Boolean consulta(String id){
+        SQLiteDatabase DB = getWritableDatabase();
+        String[] parameters = {id};
+        //Arreglo para campos que quieres que regresen
+        String[] campos = {Utilidades.CAMPO_ID};
+
         try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues values = new ContentValues();
-            values.put(Comands.COLUMN_ID, id);
-            // insert row
-            db.insert(Comands.TABLE_NAME, null, values);
-            // close db connection
-            db.close();
+            Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
+            cursor.moveToFirst();
+            Comands comands = new Comands(cursor.getString(0));
+            cursor.close();
             return true;
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            System.out.println("No existe usr");
             return false;
         }
-
-        // return newly inserted row id
-    }
-    //Consultas
-    public Comands getNote() {
-        // get readable database as we are not inserting anything
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(Comands.TABLE_NAME,
-                new String[]{Comands.COLUMN_ID},
-                Comands.COLUMN_ID,
-                null, null, null, null, null);
-
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        // prepare Comands object
-        Comands comands = new Comands(
-                cursor.getInt(cursor.getColumnIndex(Comands.COLUMN_ID)));
-        // close the db connection
-        cursor.close();
-
-        return comands;
     }
 
-
-
-    //Cambios
-    public void update(String id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
+    public void actualiza(String id){
+        SQLiteDatabase DB = getWritableDatabase();
+        String[] parameters = {id};
         ContentValues values = new ContentValues();
-        values.put(Comands.COLUMN_ID, id);
-
-        // updating row
-        db.update(Comands.TABLE_NAME, values, Comands.COLUMN_ID + " = ?", new String[]{id});
-        db.close();
+        values.put(Utilidades.CAMPO_ID, id);
+        DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
+        System.out.println("Registro cambiado");
     }
 
-    //Bajas
-    public void delete() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(Comands.TABLE_NAME, Comands.COLUMN_ID + " = ?",
-                new String[]{Comands.COLUMN_ID});
-        db.close();
+    public void bajaUSR(String id){
+        SQLiteDatabase DB = getWritableDatabase();
+        String[] parameters = {id};
+        DB.delete(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID + "=?", parameters);
+        System.out.println("Usr Eliminado");
+        DB.close();
     }
 
 }

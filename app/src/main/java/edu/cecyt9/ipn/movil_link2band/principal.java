@@ -1,12 +1,13 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -17,10 +18,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.TextView;
 
+import java.security.Principal;
+
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+import edu.cecyt9.ipn.movil_link2band.Database.Utilidades;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -30,8 +34,9 @@ public class principal extends AppCompatActivity
     String nom;
     TextView usuario;
     String id;
-
+    DatabaseHelper conect;
     Intent intent = getIntent();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +71,18 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
         id = String.valueOf(intent.getStringExtra("id"));
-        DatabaseHelper DB = new DatabaseHelper(this);
-        DB.delete();
-        DB.insertID(id);
+        conect = new DatabaseHelper(this);
+        if (!conect.consulta(id)) {
+            Long idReturn = conect.alataUSR(id);
+        }
+        System.out.println(Comands.getID());
     }
+
+
 
     @Override
     public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -97,6 +107,8 @@ public class principal extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            conect = new DatabaseHelper(this);
+            conect.bajaUSR(Comands.getID());
             startActivity(new Intent(this, MainActivity.class));
         }
 
@@ -118,20 +130,22 @@ public class principal extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
             fragment = new GeneralConfig();
             fragmentTransaction = true;
-        } else if(id == R.id.logOut){
+        } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Cerrar sesion")
                     .setMessage("¿Esta seguro de cerrar sesión?")
-                    .setNegativeButton("nel", null)
+                    .setNegativeButton("no", null)
                     .setPositiveButton("si", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
+                            conect = new DatabaseHelper(getApplicationContext());
+                            conect.bajaUSR(Comands.getID());
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();
         }
 
-        if (fragmentTransaction){
+        if (fragmentTransaction) {
             getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
         }
 

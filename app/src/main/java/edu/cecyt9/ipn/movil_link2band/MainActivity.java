@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (view.getId() == R.id.btn_Temp) {
             Intent intent = new Intent(this, principal.class);
             intent.putExtra("nom", "Juanito");
+            intent.putExtra("id", "1");
             startActivity(intent);
         } else if (view.getId() == R.id.Log_toregisterTextV) {
             Intent intent = new Intent(this, RegistroActivity.class);
