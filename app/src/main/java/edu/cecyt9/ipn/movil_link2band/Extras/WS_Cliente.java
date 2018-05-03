@@ -36,7 +36,7 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
         SOAP_ACTION = NAMESPACE + METHODNAME;
     }
 
-    @Override
+    @Override 
     protected void onPreExecute() {
         super.onPreExecute();
         PD = new ProgressDialog(context);

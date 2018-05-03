@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         }
                                         Toast.makeText(context, super.Results[1], Toast.LENGTH_LONG).show();
                                     }
-                                }; 
+                                };
                                 ws.execute(new String[]{getString(R.string.Mail)},
                                         new String[]{mailInput.getText().toString()});
                             }
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             dialogInterface.cancel();
