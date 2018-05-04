@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -105,35 +106,20 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
         txtName = view.findViewById(R.id.name);
         txtMail = view.findViewById(R.id.mail);
-
+        txtPass = view.findViewById(R.id.password);
         consulta();
-        getValues();
         return view;
     }
     private void getValues() {
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("GetResultado", getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Editar datos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
-                                }
-                            }).show();
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Datos inválidos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
-                }
+                txtName.setText(super.Results[1]);
+                txtMail.setText(super.Results[2]);
+                String pass = super.Results[4];
+                pass.replaceAll(pass, "•");
+                txtPass.setText(pass);
+
             }
         };
         ws.execute(new String[]{"ID"},
@@ -145,24 +131,27 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 if (Boolean.parseBoolean(super.Results[0])) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Editar datos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
-                                }
-                            }).show();
+                    Toast.makeText(getContext(), "Consulta bien", Toast.LENGTH_LONG).show();
+                    getValues();
+//                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+//                    alert.setTitle("Editar datos")
+//                            .setMessage(super.Results[1])
+//                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    startActivity(new Intent(getActivity(), MainActivity.class));
+//                                }
+//                            }).show();
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Datos inválidos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
+                    Toast.makeText(getContext(), "Consulta mal", Toast.LENGTH_LONG).show();
+//                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+//                    alert.setTitle("Datos inválidos")
+//                            .setMessage(super.Results[1])
+//                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                }
+//                            }).show();
                 }
             }
         };

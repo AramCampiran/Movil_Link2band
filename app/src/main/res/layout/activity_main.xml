@@ -79,6 +79,7 @@
         android:onClick="onClick"
         android:text="@string/prompt_entrar"
         android:textAllCaps="false"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -98,7 +99,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            android:background="?attr/selectableItemBackground"
             android:clickable="false"
             android:gravity="center_vertical|center_horizontal"
             android:onClick="onClick"
@@ -113,7 +113,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            android:background="?attr/selectableItemBackground"
             android:clickable="false"
             android:gravity="center_vertical|center_horizontal"
             android:onClick="onClick"

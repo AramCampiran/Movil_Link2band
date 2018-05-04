@@ -24,11 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".principal"
             android:label="@string/title_activity_principal"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegistroActivity"></activity>
+        <activity android:name=".RegistroActivity"
+            android:label="@string/action_register"></activity>
 
         <receiver
             android:name=".Darclass"
