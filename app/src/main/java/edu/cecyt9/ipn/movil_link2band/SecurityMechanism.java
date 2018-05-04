@@ -193,6 +193,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnWriteMsj.setEnabled(true);
                 btnLocalizar.setVisibility(View.VISIBLE);
                 btnBloquear.setVisibility(View.VISIBLE);
+                rbParcial.setEnabled(true);
+                rbTotal.setEnabled(true);
             } else {
                 SecMode = "Desactivado";
                 swBloqueo.setEnabled(false);
@@ -201,8 +203,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnWriteMsj.setEnabled(false);
                 btnLocalizar.setVisibility(View.INVISIBLE);
                 btnBloquear.setVisibility(View.INVISIBLE);
-                rbParcial.setVisibility(View.INVISIBLE);
-                rbTotal.setVisibility(View.INVISIBLE);
+                rbParcial.setEnabled(false);
+                rbTotal.setEnabled(false);
             }
 
         } else if (v.getId() == swBloqueo.getId()) {
