@@ -1,6 +1,7 @@
 package edu.cecyt9.ipn.movil_link2band;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
@@ -19,6 +20,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,9 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
+import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -52,7 +58,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     TextView msj;
     String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
-    Switch swBloqueo;
+    Switch swBloqueo, swSecMod;
 
     int Selected = 0;
     final int RQS_RINGTONEPICKER = 1;
@@ -65,6 +71,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
 
     LocationManager locationManager;
     ProgressDialog dialog;
+    String altitud, latitud;
+    String SecMode;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -108,12 +116,15 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_security_mechanism, container, false);
+
         btnDuracion = view.findViewById(R.id.duracion);
         btnDuracion.setOnClickListener(this);
         rbTotal = view.findViewById(R.id.total);
         rbParcial = view.findViewById(R.id.partial);
         swBloqueo = view.findViewById(R.id.blockMode);
         swBloqueo.setOnClickListener(this);
+        swSecMod = view.findViewById(R.id.saveMode);
+        swSecMod.setOnClickListener(this);
 
         msj = view.findViewById(R.id.msjInScreen);
 
@@ -173,6 +184,25 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                             btnDuracion.setText(DuraOptions[Selected]);
                         }
                     }).show();
+        } else if(v.getId() == swSecMod.getId()){
+            if (swSecMod.isChecked()) {
+                SecMode = "Activado";
+                swBloqueo.setEnabled(true);
+                btnDuracion.setEnabled(true);
+                btnTone.setEnabled(true);
+                btnWriteMsj.setEnabled(true);
+                btnLocalizar.setVisibility(View.VISIBLE);
+                btnBloquear.setVisibility(View.VISIBLE);
+            } else {
+                SecMode = "Desactivado";
+                swBloqueo.setEnabled(false);
+                btnDuracion.setEnabled(false);
+                btnTone.setEnabled(false);
+                btnWriteMsj.setEnabled(false);
+                btnLocalizar.setVisibility(View.INVISIBLE);
+                btnBloquear.setVisibility(View.INVISIBLE);
+            }
+
         } else if (v.getId() == swBloqueo.getId()) {
             if (swBloqueo.isChecked()) {
                 rbParcial.setVisibility(View.VISIBLE);
@@ -214,13 +244,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
                 startActivityForResult(intent, REQUEST_ENABLE);
             } else {
-                try {
-
-                } catch (NumberFormatException e) {
-                    System.out.println("El poio es puto " + e);
-                }
-            }
-            /*AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setMessage("¿Esta seguro de bloquear?")
                     .setPositiveButton("si", new DialogInterface.OnClickListener() {
                         @Override
@@ -234,7 +258,9 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                             }
                         }
                     })
-                    .setNegativeButton("no", null).show();*/
+                    .setNegativeButton("no", null).show();
+            }
+
         } else if (v.getId() == btnLocalizar.getId()) {
 
             ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -243,13 +269,22 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             if (!wifiManager.isWifiEnabled()) {
                 //para que sirva el metodo cambia false pr true
-                wifiManager.setWifiEnabled(false);
+                wifiManager.setWifiEnabled(true);
             }
 
 
             if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                 try {
-                    
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
+                            .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startActivity( new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            })
+                            .setNegativeButton("Cancelar", null)
+                            .show();
                 } catch (Exception e) {
                     System.out.println("Valio barriga: " + e.getMessage());
                 }
@@ -282,12 +317,33 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             }
         }
     }
+    private void actualizaLoc(String loc, String stat, String mode) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ActualizarMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+/*                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    alert.setMessage("Datos enviados")
+                            .setPositiveButton("Ok", null).show();*/
+                    System.out.println("Datos enviados");
+                } else {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    alert.setMessage("Error al enviar datos")
+                            .setPositiveButton("Ok", null).show();
+                }
+            }
+        };
+        ws.execute(new String[]{"Loc", "Status", "secureMode","ID"},
+                new String[]{loc, stat, mode, Comands.getID()});
+    }
     private LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
+            altitud = String.valueOf(location.getAltitude());
+            latitud = String.valueOf(location.getLatitude());
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
-                    .setMessage("Latitud: " + location.getLatitude() + "\n" + " Longitud: " + location.getLongitude())
+                    .setMessage("Latitud: " + latitud + "\n" + " Altitud: " + altitud)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -295,7 +351,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     }).show();
             dialog.dismiss();
-
+            actualizaLoc(altitud + latitud, "Bloqueado", SecMode);
         }
 
         @Override

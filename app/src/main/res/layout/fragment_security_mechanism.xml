@@ -29,7 +29,8 @@
             android:layout_marginEnd="10mm"
             android:layout_marginTop="2mm"
             android:switchPadding="15mm"
-            android:text="Bloqueo" />
+            android:text="Bloqueo"
+            android:enabled="false"/>
 
         <RadioGroup
             android:layout_width="wrap_content"
@@ -53,13 +54,13 @@
                 android:text="Total"
                 android:visibility="invisible" />
         </RadioGroup>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="2mm"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:id="@+id/prueba">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -73,7 +74,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:text="1 minuto" />
+                android:text="1 minuto"
+                android:enabled="false"/>
         </LinearLayout>
 
         <LinearLayout
@@ -94,17 +96,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:text="SEleccionar tono" />
+                android:text="SEleccionar tono"
+                android:enabled="false"/>
         </LinearLayout>
 
         <Button
-            android:id="@+id/WriteMsj"
+                android:id="@+id/WriteMsj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="2mm"
             android:background="@color/white"
-            android:text="Escribe un mensaje de alerta" />
+            android:text="Escribe un mensaje de alerta"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/msjInScreen"
@@ -124,7 +128,7 @@
             android:layout_marginTop="5mm"
             android:background="@color/colorCancelRED"
             android:text="Bloquer"
-            android:visibility="invisible" />
+            android:visibility="invisible"/>
 
         <Button
             android:id="@+id/localizar"

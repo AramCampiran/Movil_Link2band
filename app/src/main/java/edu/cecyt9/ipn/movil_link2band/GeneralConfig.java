@@ -49,8 +49,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
     View view;
     Button btnDelete;
-    ImageButton editNom, editMail, editPass, editPass2;
-    TextView txtName, txtMail, txtPass, txtPass2;
+    ImageButton editNom, editMail, editPass;
+    TextView txtName, txtMail, txtPass;
 
     Long id;
     private OnFragmentInteractionListener mListener;
