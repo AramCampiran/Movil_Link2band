@@ -109,6 +109,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         txtPass = view.findViewById(R.id.password);
         consulta();
         return view;
+
     }
     private void getValues() {
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("GetResultado", getActivity()) {
@@ -131,27 +132,9 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 if (Boolean.parseBoolean(super.Results[0])) {
-                    Toast.makeText(getContext(), "Consulta bien", Toast.LENGTH_LONG).show();
                     getValues();
-//                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-//                    alert.setTitle("Editar datos")
-//                            .setMessage(super.Results[1])
-//                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//                                    startActivity(new Intent(getActivity(), MainActivity.class));
-//                                }
-//                            }).show();
                 } else {
                     Toast.makeText(getContext(), "Consulta mal", Toast.LENGTH_LONG).show();
-//                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-//                    alert.setTitle("Datos inválidos")
-//                            .setMessage(super.Results[1])
-//                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialogInterface, int i) {
-//                                }
-//                            }).show();
                 }
             }
         };
@@ -190,13 +173,13 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
             final View vi = inflater.inflate(R.layout.alert, null);
+            final EditText txt = vi.findViewById(R.id.msj);
+            txt.setHint("contraseña actual");
             alert.setTitle("Verifica contraseña")
                     .setView(vi)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            EditText txt = vi.findViewById(R.id.msj);
-                            txt.setHint("contraseña actual");
                             if (!txt.getText().toString().equals("")) {
                                 contra[0] = txt.getText().toString();
                                 elimina(contra[0]);
@@ -208,11 +191,23 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     .setNegativeButton("cancelar", null).show();
 
         } else if (v.getId() == editNom.getId()) {
+            String temp = txtName.getText().toString();
             txtName.setText(alert("Nuevo nombre", "Nombre"));
+            if (txtName.getText().toString().equals("")) {
+                txtName.setText(temp);
+            }
         } else if (v.getId() == editMail.getId()) {
-            alert("Nuevo correo", "Correo");
+            String temp = txtMail.getText().toString();
+            txtMail.setText(alert("Nuevo correo", "Correo"));
+            if (txtMail.getText().toString().equals("")) {
+                txtMail.setText(temp);
+            }
         } else if (v.getId() == editPass.getId()) {
-            alert("Nueva contraseña", "Pass");
+            String temp = txtPass.getText().toString();
+            txtPass.setText(alert("Nueva contraseña", "Pass"));
+            if (txtPass.getText().toString().equals("")) {
+                txtPass.setText(temp);
+            }
         }
     }
 
@@ -238,13 +233,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                 }
             }
         });
-        deleteDialog.setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                nuevo.setText("");
-                txt.setText("");
-            }
-        });
+        deleteDialog.setNegativeButton("cancelar", null);
         deleteDialog.show();
         return cambio[0];
     }

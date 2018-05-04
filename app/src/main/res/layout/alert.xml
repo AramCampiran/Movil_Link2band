@@ -6,15 +6,6 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/msj"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Escribe un mensaje"
-        android:textAlignment="center"
-        android:textSize="16dp"
-        android:ems="1"
-        android:textColor="@android:color/black"/>
-    <EditText
         android:id="@+id/cambio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,4 +17,13 @@
         android:visibility="invisible"
         android:textColor="@android:color/black"/>
 
+    <EditText
+        android:id="@+id/msj"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escribe un mensaje"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:ems="1"
+        android:textColor="@android:color/black"/>
 </LinearLayout>
