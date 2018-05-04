@@ -117,9 +117,11 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             public void onSuccessfulConnectionAttempt(Context context) {
                 txtName.setText(super.Results[1]);
                 txtMail.setText(super.Results[2]);
-                String pass = super.Results[4];
-                pass.replaceAll(pass, "•");
-                txtPass.setText(pass);
+                String lblpass = "";
+                for (int i = 0 ; i < super.Results[4].length(); i++) {
+                    lblpass += "•";
+                }
+                txtPass.setText(lblpass);
 
             }
         };
