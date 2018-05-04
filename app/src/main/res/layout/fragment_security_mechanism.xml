@@ -19,7 +19,7 @@
             android:layout_marginEnd="10mm"
             android:layout_marginTop="3mm"
             android:switchPadding="10mm"
-            android:text="Activar modo guardian" />
+            android:text="Activar 'Modo Seguro'"/>
 
         <Switch
             android:id="@+id/blockMode"
@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="3mm"
-                android:text="Duracion de alarma"
+                android:text="Duración de alarma"
                 android:textColor="@android:color/black" />
 
             <Button
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="5mm"
-                android:text="Tono de alrma"
+                android:text="Tono de alarma"
                 android:textColor="@android:color/black" />
 
             <Button
@@ -123,14 +123,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5mm"
             android:background="@color/colorCancelRED"
-            android:text="Bloquer" />
+            android:text="Bloquer"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/localizar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2mm"
-            android:text="Localizar"/>
+            android:text="Localizar"
+            android:visibility="invisible" />
     </LinearLayout>
 
 </ScrollView>

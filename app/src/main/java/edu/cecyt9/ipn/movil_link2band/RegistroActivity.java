@@ -28,7 +28,7 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
         mail = findViewById(R.id.Reg_mailInput);
         pass = findViewById(R.id.Reg_passInput);
         repeatpass = findViewById(R.id.Reg_repeatpassInput);
-    } 
+    }
 
     @Override
     public void onClick(View view) {
