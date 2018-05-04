@@ -193,8 +193,6 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnWriteMsj.setEnabled(true);
                 btnLocalizar.setVisibility(View.VISIBLE);
                 btnBloquear.setVisibility(View.VISIBLE);
-                rbParcial.setVisibility(View.VISIBLE);
-                rbTotal.setVisibility(View.VISIBLE);
             } else {
                 SecMode = "Desactivado";
                 swBloqueo.setEnabled(false);
