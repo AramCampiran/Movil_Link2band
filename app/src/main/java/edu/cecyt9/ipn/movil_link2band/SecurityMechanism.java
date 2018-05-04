@@ -71,7 +71,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
 
     LocationManager locationManager;
     ProgressDialog dialog;
-    String altitud, latitud;
+    String longitud, latitud;
     String SecMode;
 
     // TODO: Rename and change types of parameters
@@ -193,6 +193,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnWriteMsj.setEnabled(true);
                 btnLocalizar.setVisibility(View.VISIBLE);
                 btnBloquear.setVisibility(View.VISIBLE);
+                rbParcial.setVisibility(View.VISIBLE);
+                rbTotal.setVisibility(View.VISIBLE);
             } else {
                 SecMode = "Desactivado";
                 swBloqueo.setEnabled(false);
@@ -201,6 +203,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnWriteMsj.setEnabled(false);
                 btnLocalizar.setVisibility(View.INVISIBLE);
                 btnBloquear.setVisibility(View.INVISIBLE);
+                rbParcial.setVisibility(View.INVISIBLE);
+                rbTotal.setVisibility(View.INVISIBLE);
             }
 
         } else if (v.getId() == swBloqueo.getId()) {
@@ -322,9 +326,9 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 if (Boolean.parseBoolean(super.Results[0])) {
-/*                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
                     alert.setMessage("Datos enviados")
-                            .setPositiveButton("Ok", null).show();*/
+                            .setPositiveButton("Ok", null).show();
                     System.out.println("Datos enviados");
                 } else {
                     AlertDialog.Builder alert = new AlertDialog.Builder(context);
@@ -339,11 +343,11 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     private LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            altitud = String.valueOf(location.getAltitude());
+            longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
-                    .setMessage("Latitud: " + latitud + "\n" + " Altitud: " + altitud)
+                    .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -351,7 +355,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     }).show();
             dialog.dismiss();
-            actualizaLoc(altitud + latitud, "Bloqueado", SecMode);
+            actualizaLoc( latitud +", "+ longitud, "Bloqueado", SecMode);
         }
 
         @Override
