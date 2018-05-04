@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -44,14 +45,12 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    Intent intent;
 
     View view;
     Button btnDelete;
-    ImageButton editNom, editMail, editPass, editPass2;
-    TextView txtName, txtMail, txtPass, txtPass2;
+    ImageButton editNom, editMail, editPass;
+    TextView txtName, txtMail, txtPass;
 
-    Long id;
     private OnFragmentInteractionListener mListener;
 
     DatabaseHelper DB;
@@ -107,32 +106,19 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         txtMail = view.findViewById(R.id.mail);
 
         consulta();
-        getValues();
         return view;
     }
     private void getValues() {
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("GetResultado", getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Editar datos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
-                                }
-                            }).show();
+                System.out.println("Result: "+super.Results[0]);
+                if (!String.valueOf(super.Results[0]).equals("Sin información")) {
+                    txtName.setText(super.Results[1]);
+                    txtPass.setText(super.Results[2]);
+                    txtMail.setText(super.Results[3]);
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Datos inválidos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
+                    System.out.println("Error en los valores");
                 }
             }
         };
@@ -145,24 +131,11 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 if (Boolean.parseBoolean(super.Results[0])) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Editar datos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
-                                }
-                            }).show();
+                    getValues();
                 } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Datos inválidos")
-                            .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("datos de usuario inexistentes")
+                            .setPositiveButton("Aceptar",  null).show();
                 }
             }
         };
@@ -278,11 +251,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                     alert.setTitle("Datos inválidos")
                             .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
+                            .setPositiveButton("Ok", null).show();
                 }
             }
         };
@@ -308,11 +277,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                     AlertDialog.Builder alert = new AlertDialog.Builder(context);
                     alert.setTitle("Datos inválidos")
                             .setMessage(super.Results[1])
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).show();
+                            .setPositiveButton("Ok", null).show();
                 }
             }
         };
