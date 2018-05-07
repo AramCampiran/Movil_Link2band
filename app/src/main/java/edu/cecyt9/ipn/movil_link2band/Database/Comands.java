@@ -7,10 +7,13 @@ package edu.cecyt9.ipn.movil_link2band.Database;
 public class Comands {
 
     private static String ID;
+    private static String LOC;
 
     public  Comands(){}
-    public Comands(String ID) {
+
+    public Comands(String ID, String LOC) {
         this.ID = ID;
+        this.LOC = LOC;
     }
 
     public static String getID() {
@@ -19,5 +22,13 @@ public class Comands {
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public static String getLOC() {
+        return LOC;
+    }
+
+    public void setLOC(String LOC) {
+        this.LOC = LOC;
     }
 }

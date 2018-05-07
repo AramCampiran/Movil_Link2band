@@ -40,6 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(Utilidades.CAMPO_ID, id);
         Long idResult = DB.insert(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID, values);
+        Comands comands = new Comands(id, "null");
         DB.close();
         System.out.println("usuario registrado con exito");
         return idResult;
@@ -49,12 +50,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase DB = getWritableDatabase();
         String[] parameters = {id};
         //Arreglo para campos que quieres que regresen
-        String[] campos = {Utilidades.CAMPO_ID};
+        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
             cursor.moveToFirst();
-            Comands comands = new Comands(cursor.getString(0));
+            Comands comands = new Comands(cursor.getString(0), cursor.getString(1));
             cursor.close();
             return true;
         } catch (Exception e) {
@@ -63,13 +64,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void actualiza(String id){
+    public void actualiza(String id, String loc){
         SQLiteDatabase DB = getWritableDatabase();
         String[] parameters = {id};
         ContentValues values = new ContentValues();
         values.put(Utilidades.CAMPO_ID, id);
+        values.put(Utilidades.CAMPO_LOC, loc);
         DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
-        System.out.println("Registro cambiado");
+        DB.close();
+        Comands comands = new Comands(id, loc);
     }
 
     public void bajaUSR(String id){

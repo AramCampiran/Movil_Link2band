@@ -39,7 +39,7 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                     if (Boolean.parseBoolean(super.Results[0])) {
                         Intent intent = new Intent(context, principal.class);
                         intent.putExtra("nom", user.getText().toString());
-                        intent.putExtra("id", super.Results[1]);
+                        intent.putExtra("id", super.Results[2]);
                         startActivity(intent);
                     } else {
                         AlertDialog.Builder alert = new AlertDialog.Builder(context);

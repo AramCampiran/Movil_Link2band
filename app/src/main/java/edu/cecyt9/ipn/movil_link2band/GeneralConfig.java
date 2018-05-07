@@ -271,6 +271,8 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     }
 
     private void elimina(String contra) {
+        DatabaseHelper DB = new DatabaseHelper(getActivity());
+        DB.bajaUSR(Comands.getID());
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.BajaMethod), getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {

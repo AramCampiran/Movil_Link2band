@@ -73,8 +73,9 @@ public class principal extends AppCompatActivity
         conect = new DatabaseHelper(this);
         if (!conect.consulta(id)) {
             Long idReturn = conect.alataUSR(id);
+            System.out.println("Nueva id " + Comands.getID());
         }
-        System.out.println(Comands.getID());
+        System.out.println("ID existente " +Comands.getID());
     }
 
 

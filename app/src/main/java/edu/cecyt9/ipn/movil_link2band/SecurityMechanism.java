@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 import static android.app.Activity.RESULT_OK;
@@ -73,7 +76,6 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     ProgressDialog dialog;
     String longitud, latitud;
     String SecMode;
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -201,7 +203,6 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 btnDuracion.setEnabled(false);
                 btnTone.setEnabled(false);
                 btnWriteMsj.setEnabled(false);
-                btnLocalizar.setVisibility(View.INVISIBLE);
                 btnBloquear.setVisibility(View.INVISIBLE);
                 rbParcial.setEnabled(false);
                 rbTotal.setEnabled(false);
@@ -266,61 +267,69 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             }
 
         } else if (v.getId() == btnLocalizar.getId()) {
+            System.out.println("Loc: " +  Comands.getLOC());
+            if (!Comands.getLOC().equals("null")) {
+                actualizaLoc( Comands.getLOC(), "Bloqueado", SecMode);
+            }else{
+                ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
-            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-            WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if (!wifiManager.isWifiEnabled()) {
-                //para que sirva el metodo cambia false pr true
-                wifiManager.setWifiEnabled(true);
-            }
-
-
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                try {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
-                            .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    startActivity( new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                }
-                            })
-                            .setNegativeButton("Cancelar", null)
-                            .show();
-                } catch (Exception e) {
-                    System.out.println("Valio barriga: " + e.getMessage());
+                WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (!wifiManager.isWifiEnabled()) {
+                    //para que sirva el metodo cambia false por true
+                    wifiManager.setWifiEnabled(true);
                 }
-            } else {
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-                    return;
-                }
-                if (networkInfo == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Ups! ha ocurrido un error")
-                            .setMessage("Por favor active conexion de datos mobiles o wifi")
-                            .setPositiveButton("Aceptar", null)
-                    .show();
-                }else if (networkInfo.getTypeName().equals("WIFI")) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 1000, 10, locationListenerGPS);
-                    dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
-                } else if (networkInfo.getTypeName().equals("MOBILE")) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000,10, locationListenerNetwork);
-                    dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
+
+
+                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    try {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
+                                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        startActivity( new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                    }
+                                })
+                                .setNegativeButton("Cancelar", null)
+                                .show();
+                    } catch (Exception e) {
+                        System.out.println("Valio barriga: " + e.getMessage());
+                    }
+                } else {
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+                        return;
+                    }
+                    if (networkInfo == null) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Ups! ha ocurrido un error")
+                                .setMessage("Por favor active conexion de datos mobiles o wifi")
+                                .setPositiveButton("Aceptar", null)
+                                .show();
+                    }else if (networkInfo.getTypeName().equals("WIFI")) {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2*20*100, 10, locationListenerGPS);
+                        dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
+                        dialog.setCanceledOnTouchOutside(true);
+                    /*actualizaLoc( "19.4535061,-99.1752977", "Desbloqueado", SecMode);*/
+
+                    } else if (networkInfo.getTypeName().equals("MOBILE")) {
+                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000,10, locationListenerNetwork);
+                        dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
+                    }
                 }
             }
         }
     }
+
     private void actualizaLoc(String loc, String stat, String mode) {
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ActualizarMethod), getActivity()) {
             @Override
@@ -340,11 +349,13 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         ws.execute(new String[]{"Loc", "Status", "secureMode","ID"},
                 new String[]{loc, stat, mode, Comands.getID()});
     }
+
     private LocationListener locationListenerGPS = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
             longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
+            System.out.println("Latitud: " + latitud + "\n" + " Longitud: " + longitud);
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
                     .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
@@ -356,11 +367,23 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                     }).show();
             dialog.dismiss();
             actualizaLoc( latitud +", "+ longitud, "Bloqueado", SecMode);
+            DatabaseHelper DB = new DatabaseHelper(getActivity());
+            DB.actualiza(Comands.getID(), latitud +", "+ longitud);
         }
 
         @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
+        public void onStatusChanged(String s, int status, Bundle bundle) {
+            switch (status) {
+                case LocationProvider.AVAILABLE:
+                    System.out.println("AVAILABLE " + LocationProvider.AVAILABLE);
+                    break;
+                case LocationProvider.OUT_OF_SERVICE:
+                    System.out.println("OUT_OF_SERVICE " + LocationProvider.OUT_OF_SERVICE);
+                    break;
+                case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                    System.out.println("TEMPORARILY_UNAVAILABLE " + LocationProvider.TEMPORARILY_UNAVAILABLE);
+                    break;
+            }
         }
 
         @Override
@@ -375,12 +398,15 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     };
 
     private LocationListener locationListenerNetwork = new LocationListener() {
+
         @Override
         public void onLocationChanged(Location location) {
+            longitud = String.valueOf(location.getLongitude());
+            latitud = String.valueOf(location.getLatitude());
             System.out.println("Latitud: " + location.getLatitude() + " Longitud: " + location.getLongitude());
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
-                    .setMessage("Latitud: " + location.getLatitude() +"\n"+ " Longitud: " + location.getLongitude())
+                    .setMessage("Latitud: " + latitud +"\n"+ " Longitud: " + longitud)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -388,6 +414,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     }).show();
             dialog.dismiss();
+            DatabaseHelper DB = new DatabaseHelper(getActivity());
+            DB.actualiza(Comands.getID(), latitud +", "+ longitud);
         }
 
         @Override
