@@ -1,5 +1,6 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -20,6 +22,7 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     private EditText user, mail, pass, repeatpass;
     private WS_Cliente ws;
 
+    Validacion val;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,34 +31,17 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
         mail = findViewById(R.id.Reg_mailInput);
         pass = findViewById(R.id.Reg_passInput);
         repeatpass = findViewById(R.id.Reg_repeatpassInput);
+        val = new Validacion();
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_ready) {
-            WS_Cliente ws = new WS_Cliente(getString(R.string.RegistroMethod), this) {
-                @Override
-                public void onSuccessfulConnectionAttempt(Context context) {
-                    if (Boolean.parseBoolean(super.Results[0])) {
-                        Intent intent = new Intent(context, principal.class);
-                        intent.putExtra("nom", user.getText().toString());
-                        intent.putExtra("id", super.Results[2]);
-                        startActivity(intent);
-                    } else {
-                        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                        alert.setTitle("Datos inválidos")
-                                .setMessage(super.Results[1])
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        user.requestFocus();
-                                    }
-                                }).show();
-                    }
-                }
-            };
-            ws.execute(new String[]{getString(R.string.UserName), getString(R.string.Pass), getString(R.string.Model), getString(R.string.Mail)},
-                    new String[]{user.getText().toString(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});
+            if (val.Registro_Val(user, mail, pass, repeatpass)) {
+                System.out.println("Bien papu");
+            } else {
+                val.MarkTheError();
+            }
         }
     }
 
