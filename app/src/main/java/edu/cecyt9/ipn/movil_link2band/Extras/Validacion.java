@@ -39,16 +39,21 @@ public class Validacion {
         Error = new ArrayList<String>();
         Pattern patternMail = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[A-Za-z]{2,})$");
         Pattern patternNom = Pattern.compile("^[\\w]+(\\.[\\w])*$");
-        Matcher matcher0 = null, matcher1 = null;
+        //Aqui me quede
+        Pattern patternPass = Pattern.compile("^[\\S]+[<>]+$");
+        Matcher matcher0 = null, matcher1 = null, matcher23 = null;
         boolean isCorrect = true;
         for (int i = 0; i < datos.length; i++) {
             boolean tempCorrect = false;
             WrongData.add(datos[i]);
-            if (i == 0) matcher0 = patternNom.matcher(datos[i].getText().toString());
-            else if (i == 1) matcher1 = patternMail.matcher(datos[i].getText().toString());
+            if(i == 0) matcher0 = patternNom.matcher(datos[i].getText().toString());
+            else if(i == 1) matcher1 = patternMail.matcher(datos[i].getText().toString());
+            else if(i == 2) matcher23 = patternPass.matcher(datos[i].getText().toString());
+            else if(i == 3) matcher23 = patternPass.matcher(datos[i].getText().toString());
 
             if (datos[i].getText().toString().isEmpty()) {
                 Error.add("Completa este campo");
+
             } else if (datos[i].length() < LengthBounds[0]) {
                 Error.add("Introduce al menos " + LengthBounds[0] + " caracteres");
             } else if (datos[i].length() > LengthBounds[1]) {
@@ -57,8 +62,12 @@ public class Validacion {
                 Error.add("No introducir caracteres especiales o espacios en blanco");
             } else if (i == 1 && !matcher1.find()) {
                 Error.add("Introduce un correo valido");
-            } else if (i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())) {
+            } else if(i == 2 && !matcher23.find()) {
+                Error.add("No introducir caracteres especiales o espacios en blanco");
+            } else if(i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())){
                 Error.add("Las contraseñas no coinciden");
+            }else if (i == 3 && !matcher23.find()) {
+                Error.add("No introducir caracteres especiales o espacios en blanco");
             } else {
                 tempCorrect = true;
                 WrongData.remove(datos[i]);
