@@ -74,8 +74,8 @@ public class principal extends AppCompatActivity
         if (!conect.consulta(id)) {
             Long idReturn = conect.alataUSR(id);
             System.out.println("Nueva id " + Comands.getID());
-        }
-        System.out.println("ID existente " +Comands.getID());
+        }else
+            System.out.println("ID existente " +Comands.getID());
     }
 
 

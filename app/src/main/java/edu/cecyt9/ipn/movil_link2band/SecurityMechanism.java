@@ -141,6 +141,31 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         btnLocalizar = view.findViewById(R.id.localizar);
         btnLocalizar.setOnClickListener(this);
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+
+        }
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+        }
         return view;
     }
 
@@ -186,7 +211,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                             btnDuracion.setText(DuraOptions[Selected]);
                         }
                     }).show();
-        } else if(v.getId() == swSecMod.getId()){
+        } else if (v.getId() == swSecMod.getId()) {
             if (swSecMod.isChecked()) {
                 SecMode = "Activado";
                 swBloqueo.setEnabled(true);
@@ -250,27 +275,27 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 startActivityForResult(intent, REQUEST_ENABLE);
             } else {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-            alert.setMessage("¿Esta seguro de bloquear?")
-                    .setPositiveButton("si", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            if (!devicePolicyManager.isAdminActive(component)) {
-                                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
-                                startActivityForResult(intent, REQUEST_ENABLE);
-                            } else {
-                                devicePolicyManager.lockNow();
+                alert.setMessage("¿Esta seguro de bloquear?")
+                        .setPositiveButton("si", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (!devicePolicyManager.isAdminActive(component)) {
+                                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
+                                    startActivityForResult(intent, REQUEST_ENABLE);
+                                } else {
+                                    devicePolicyManager.lockNow();
+                                }
                             }
-                        }
-                    })
-                    .setNegativeButton("no", null).show();
+                        })
+                        .setNegativeButton("no", null).show();
             }
 
         } else if (v.getId() == btnLocalizar.getId()) {
-            System.out.println("Loc: " +  Comands.getLOC());
+            System.out.println("Loc: " + Comands.getLOC());
             if (!Comands.getLOC().equals("null")) {
-                actualizaLoc( Comands.getLOC(), "Bloqueado", SecMode);
-            }else{
+                actualizaLoc(Comands.getLOC(), "Bloqueado", SecMode);
+            } else {
                 ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -280,52 +305,45 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                     wifiManager.setWifiEnabled(true);
                 }
 
-
-                if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    try {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
-                                .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        startActivity( new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                    }
-                                })
-                                .setNegativeButton("Cancelar", null)
-                                .show();
-                    } catch (Exception e) {
-                        System.out.println("Valio barriga: " + e.getMessage());
-                    }
-                } else {
-                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-                        return;
-                    }
-                    if (networkInfo == null) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Ups! ha ocurrido un error")
-                                .setMessage("Por favor active conexion de datos mobiles o wifi")
-                                .setPositiveButton("Aceptar", null)
-                                .show();
-                    }else if (networkInfo.getTypeName().equals("WIFI")) {
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2*20*100, 10, locationListenerGPS);
-                        dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
-                        dialog.setCanceledOnTouchOutside(true);
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+                    return;
+                }
+                if (networkInfo == null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Ups! ha ocurrido un error")
+                            .setMessage("Por favor active conexion de datos mobiles o wifi")
+                            .setPositiveButton("Aceptar", null)
+                            .show();
+                } else if (networkInfo.getTypeName().equals("WIFI")) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 100, 10, locationListenerGPS);
+                    dialog = new ProgressDialog(getActivity());
+                    dialog.setMessage("Buscando localizacion");
+                    dialog.setMax(300);
+                    dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialog.dismiss();
+                            locationManager.removeUpdates(locationListenerGPS);
+                            locationManager.removeUpdates(locationListenerNetwork);
+                        }
+                    });
+                    dialog.show();
                     /*actualizaLoc( "19.4535061,-99.1752977", "Desbloqueado", SecMode);*/
 
-                    } else if (networkInfo.getTypeName().equals("MOBILE")) {
-                        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000,10, locationListenerNetwork);
-                        dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
-                    }
+                } else if (networkInfo.getTypeName().equals("MOBILE")) {
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 10, locationListenerNetwork);
+                    dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
                 }
+
             }
         }
     }
@@ -346,7 +364,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 }
             }
         };
-        ws.execute(new String[]{"Loc", "Status", "secureMode","ID"},
+        ws.execute(new String[]{"Loc", "Status", "secureMode", "ID"},
                 new String[]{loc, stat, mode, Comands.getID()});
     }
 
@@ -366,9 +384,9 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     }).show();
             dialog.dismiss();
-            actualizaLoc( latitud +", "+ longitud, "Bloqueado", SecMode);
+            actualizaLoc(latitud + ", " + longitud, "Bloqueado", SecMode);
             DatabaseHelper DB = new DatabaseHelper(getActivity());
-            DB.actualiza(Comands.getID(), latitud +", "+ longitud);
+            DB.actualiza(Comands.getID(), latitud + ", " + longitud);
         }
 
         @Override
@@ -406,7 +424,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             System.out.println("Latitud: " + location.getLatitude() + " Longitud: " + location.getLongitude());
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
-                    .setMessage("Latitud: " + latitud +"\n"+ " Longitud: " + longitud)
+                    .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -415,7 +433,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                     }).show();
             dialog.dismiss();
             DatabaseHelper DB = new DatabaseHelper(getActivity());
-            DB.actualiza(Comands.getID(), latitud +", "+ longitud);
+            DB.actualiza(Comands.getID(), latitud + ", " + longitud);
         }
 
         @Override

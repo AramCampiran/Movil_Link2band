@@ -38,7 +38,29 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         if (view.getId() == R.id.btn_ready) {
             if (val.Registro_Val(user, mail, pass, repeatpass)) {
-                System.out.println("Bien papu");
+                WS_Cliente ws = new WS_Cliente(getString(R.string.RegistroMethod), this) {
+                    @Override
+                    public void onSuccessfulConnectionAttempt(Context context) {
+                        if (Boolean.parseBoolean(super.Results[0])) {
+                            Intent intent = new Intent(context, principal.class);
+                            intent.putExtra("nom", user.getText().toString());
+                            intent.putExtra("id", super.Results[2]);
+                            startActivity(intent);
+                        } else {
+                            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                            alert.setTitle("Datos inválidos")
+                                    .setMessage(super.Results[1])
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            user.requestFocus();
+                                        }
+                                    }).show();
+                        }
+                    }
+                };
+                ws.execute(new String[]{getString(R.string.UserName), getString(R.string.Pass), getString(R.string.Model), getString(R.string.Mail)},
+                        new String[]{user.getText().toString(), pass.getText().toString(), new String(Build.MANUFACTURER + " " + DeviceName.getDeviceName()), mail.getText().toString()});
             } else {
                 val.MarkTheError();
             }

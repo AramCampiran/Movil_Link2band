@@ -3,6 +3,8 @@ package edu.cecyt9.ipn.movil_link2band.Extras;
 import android.widget.EditText;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Validacion {
 
@@ -35,6 +37,7 @@ public class Validacion {
     public boolean Registro_Val(EditText... datos) {
         WrongData = new ArrayList<EditText>();
         Error = new ArrayList<String>();
+        Boolean match = true;
         boolean isCorrect = true;
         for (int i = 0; i < datos.length; i++) {
             boolean tempCorrect = false;
@@ -48,19 +51,20 @@ public class Validacion {
             } else if(i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())){
                 Error.add("Las contraseñas no coinciden");
             } else if(i == 1){
-                String mail = datos[i].getText().toString();
-                String[] splitMail = mail.split("@");
-                if (splitMail.length == 2) {
-                    String[] splitMail2 = splitMail[1].split("\\.");
-                    if (splitMail2.length != 2) {
-                    }
-                }else
-                    Error.add("Introduce un correo valido");
+                // Patrón para validar el email
+                Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+                Matcher matcher = pattern.matcher(datos[i].getText().toString());
+                if (matcher.find() == false) {
+                    match = false;
+                }
+            } if (!match){
+                Error.add("Introduce un correo valido");
             } else{
                 tempCorrect = true;
                 WrongData.remove(datos[i]);
             }
-            if (!tempCorrect) isCorrect = false;
+            if (tempCorrect == false)
+                isCorrect = false;
         }
 
         return isCorrect;
