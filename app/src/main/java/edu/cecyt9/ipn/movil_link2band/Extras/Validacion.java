@@ -37,36 +37,34 @@ public class Validacion {
     public boolean Registro_Val(EditText... datos) {
         WrongData = new ArrayList<EditText>();
         Error = new ArrayList<String>();
-        Boolean match = true;
+        Pattern patternMail = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[A-Za-z]{2,})$");
+        Pattern patternNom = Pattern.compile("^[\\w]+(\\.[\\w])*$");
+        Matcher matcher0 = null, matcher1 = null;
         boolean isCorrect = true;
         for (int i = 0; i < datos.length; i++) {
             boolean tempCorrect = false;
             WrongData.add(datos[i]);
+            if (i == 0) matcher0 = patternNom.matcher(datos[i].getText().toString());
+            else if (i == 1) matcher1 = patternMail.matcher(datos[i].getText().toString());
+
             if (datos[i].getText().toString().isEmpty()) {
                 Error.add("Completa este campo");
             } else if (datos[i].length() < LengthBounds[0]) {
                 Error.add("Introduce al menos " + LengthBounds[0] + " caracteres");
             } else if (datos[i].length() > LengthBounds[1]) {
                 Error.add("No sobrepases los " + LengthBounds[1] + " caracteres");
-            } else if(i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())){
-                Error.add("Las contraseñas no coinciden");
-            } else if(i == 1){
-                // Patrón para validar el email
-                Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-                Matcher matcher = pattern.matcher(datos[i].getText().toString());
-                if (matcher.find() == false) {
-                    match = false;
-                }
-            } if (!match){
+            } else if (i == 0 && !matcher0.find()) {
+                Error.add("No introducir caracteres especiales o espacios en blanco");
+            } else if (i == 1 && !matcher1.find()) {
                 Error.add("Introduce un correo valido");
-            } else{
+            } else if (i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())) {
+                Error.add("Las contraseñas no coinciden");
+            } else {
                 tempCorrect = true;
                 WrongData.remove(datos[i]);
             }
-            if (tempCorrect == false)
-                isCorrect = false;
+            if (!tempCorrect) isCorrect = false;
         }
-
         return isCorrect;
     }
 

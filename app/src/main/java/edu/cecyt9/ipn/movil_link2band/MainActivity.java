@@ -1,5 +1,6 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,16 +11,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.security.Principal;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Extras.Validacion;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
@@ -32,6 +28,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         user = findViewById(R.id.Log_userInput);
         pass = findViewById(R.id.Log_passInput);
+        System.out.println(Comands.getID());
+        if(Comands.getID() != null){
+            Intent intent = new Intent(this, principal.class);
+            intent.putExtra("nom", Comands.getNOM());
+            intent.putExtra("pass", Comands.getPASS());
+            intent.putExtra("id", Comands.getID());
+            startActivity(intent);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
@@ -40,12 +44,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (view.getId() == R.id.Log_signBtn) {
             Validacion val = new Validacion();
             if (val.LogIn_Val(user, pass)) {
-                WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
+                @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.LogInMethod), this) {
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
                             Intent intent = new Intent(context, principal.class);
                             intent.putExtra("nom", user.getText().toString());
+                            intent.putExtra("pass", pass.getText().toString());
                             intent.putExtra("id", super.Results[1]);
                             startActivity(intent);
                         } else {
@@ -115,5 +120,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }).show();
         }
+    }
+
+    private void WS_LogIn(String usr, String psw) {
+
     }
 }

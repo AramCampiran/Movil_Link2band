@@ -38,12 +38,13 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         if (view.getId() == R.id.btn_ready) {
             if (val.Registro_Val(user, mail, pass, repeatpass)) {
-                WS_Cliente ws = new WS_Cliente(getString(R.string.RegistroMethod), this) {
+                @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.RegistroMethod), this) {
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
                             Intent intent = new Intent(context, principal.class);
                             intent.putExtra("nom", user.getText().toString());
+                            intent.putExtra("pass", pass.getText().toString());
                             intent.putExtra("id", super.Results[2]);
                             startActivity(intent);
                         } else {

@@ -1,10 +1,7 @@
 package edu.cecyt9.ipn.movil_link2band;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,20 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.security.Principal;
-
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
-import edu.cecyt9.ipn.movil_link2band.Database.Utilidades;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GeneralConfig.OnFragmentInteractionListener,
         SecurityMechanism.OnFragmentInteractionListener {
 
-    String nom;
     TextView usuario;
-    String id;
+    String id, nom, pass;
     DatabaseHelper conect;
 
     @Override
@@ -70,9 +63,10 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
         id = intent.getStringExtra("id");
+        pass = intent.getStringExtra("pass");
         conect = new DatabaseHelper(this);
         if (!conect.consulta(id)) {
-            Long idReturn = conect.alataUSR(id);
+            Long idReturn = conect.alataUSR(id, nom, pass);
             System.out.println("Nueva id " + Comands.getID());
         }else
             System.out.println("ID existente " +Comands.getID());
@@ -109,6 +103,7 @@ public class principal extends AppCompatActivity
         if (id == R.id.action_settings) {
             conect = new DatabaseHelper(this);
             conect.bajaUSR(Comands.getID());
+            Comands.Clear();
             startActivity(new Intent(this, MainActivity.class));
         }
 
@@ -140,6 +135,7 @@ public class principal extends AppCompatActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             conect = new DatabaseHelper(getApplicationContext());
                             conect.bajaUSR(Comands.getID());
+                            Comands.Clear();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();

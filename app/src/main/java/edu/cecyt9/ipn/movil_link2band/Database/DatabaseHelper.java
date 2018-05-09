@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.zip.CheckedOutputStream;
-
 /**
  * Created by Usuario on 29/04/2018.
  */
@@ -35,12 +33,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(DB);
     }
 
-    public Long alataUSR(String id) {
+    public Long alataUSR(String id, String nom, String pass) {
         SQLiteDatabase DB = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Utilidades.CAMPO_ID, id);
+        values.put(Utilidades.CAMPO_NOM, nom);
+        values.put(Utilidades.CAMPO_PASS, pass);
         Long idResult = DB.insert(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID, values);
-        Comands comands = new Comands(id, "null");
+        Comands.setID(id);
+        Comands.setNOM(nom);
+        Comands.setPASS(pass);
+        Comands.setLOC("null");
         DB.close();
         System.out.println("usuario registrado con exito");
         return idResult;
@@ -50,12 +53,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase DB = getWritableDatabase();
         String[] parameters = {id};
         //Arreglo para campos que quieres que regresen
-        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC};
+        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
             cursor.moveToFirst();
-            Comands comands = new Comands(cursor.getString(0), cursor.getString(1));
+            Comands.setID(cursor.getString(0));
+            Comands.setLOC(cursor.getString(1));
+            Comands.setNOM(cursor.getString(2));
+            Comands.setPASS(cursor.getString(3));
             cursor.close();
             return true;
         } catch (Exception e) {
@@ -72,7 +78,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Utilidades.CAMPO_LOC, loc);
         DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
         DB.close();
-        Comands comands = new Comands(id, loc);
+        Comands.setID(id);
+        Comands.setLOC(loc);
     }
 
     public void bajaUSR(String id){
