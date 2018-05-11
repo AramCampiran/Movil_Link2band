@@ -58,7 +58,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     private static final String ARG_PARAM2 = "param2";
 
     View view;
-    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar;
+    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar, btnGuardar;
     TextView msj;
     String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
@@ -134,6 +134,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         btnWriteMsj.setOnClickListener(this);
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
+        btnGuardar = view.findViewById(R.id.guardar);
+        btnGuardar.setOnClickListener(this);
 
         uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         msj = view.findViewById(R.id.msjInScreen);
@@ -345,6 +347,15 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 }
 
             }
+        } else if(v.getId() == btnGuardar.getId()){
+            Boolean sMode = swSecMod.isChecked(),
+                    block = swBloqueo.isChecked(),
+                    parBlock = rbParcial.isChecked(),
+                    totBlock = rbTotal.isChecked(),
+                    duration = btnDuracion.isClickable(),
+                    tone = btnTone.isClickable(),
+                    msj = false;
+            //aki me quede
         }
     }
 

@@ -11,6 +11,14 @@ public class Comands {
     private static String NOM;
     private static String PASS;
 
+    private static String SMODE;
+    private static String BLOCK;
+    private static String PARBLOCK;
+    private static String TOTBLOCK;
+    private static String DURATION;
+    private static String TONE;
+    private static String MSJ;
+
     public  Comands(){}
 
     public Comands(String ID, String LOC, String NOM, String PASS) {
@@ -50,4 +58,32 @@ public class Comands {
         Comands.NOM = null;
         Comands.PASS = null;
     }
+
+    public static String getSMODE() {return SMODE;}
+
+    public static void setSMODE(String SMODE) {Comands.SMODE = SMODE;}
+
+    public static String getBLOCK() {return BLOCK;}
+
+    public static void setBLOCK(String BLOCK) {Comands.BLOCK = BLOCK;}
+
+    public static String getPARBLOCK() {return PARBLOCK;}
+
+    public static void setPARBLOCK(String PARBLOCK) {Comands.PARBLOCK = PARBLOCK;}
+
+    public static String getTOTBLOCK() {return TOTBLOCK;}
+
+    public static void setTOTBLOCK(String TOTBLOCK) {Comands.TOTBLOCK = TOTBLOCK;}
+
+    public static String getDURATION() {return DURATION;}
+
+    public static void setDURATION(String DURATION) {Comands.DURATION = DURATION;}
+
+    public static String getTONE() {return TONE;}
+
+    public static void setTONE(String TONE) {Comands.TONE = TONE;}
+
+    public static String getMSJ() {return MSJ;}
+
+    public static void setMSJ(String MSJ) {Comands.MSJ = MSJ;}
 }

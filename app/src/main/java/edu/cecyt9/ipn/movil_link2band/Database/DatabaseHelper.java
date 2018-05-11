@@ -53,7 +53,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase DB = getWritableDatabase();
         String[] parameters = {id};
         //Arreglo para campos que quieres que regresen
-        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS};
+        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS,
+                            Utilidades.CAMPO_SMODE, Utilidades.CAMPO_BLOCK, Utilidades.CAMPO_PARBLOCK, Utilidades.CAMPO_TOTBLOCK, Utilidades.CAMPO_DURATION,
+                            Utilidades.CAMPO_TONE, Utilidades.CAMPO_MSJ};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
@@ -62,6 +64,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Comands.setLOC(cursor.getString(1));
             Comands.setNOM(cursor.getString(2));
             Comands.setPASS(cursor.getString(3));
+
+            Comands.setSMODE(cursor.getString(4));
+            Comands.setBLOCK(cursor.getString(5));
+            Comands.setPARBLOCK(cursor.getString(6));
+            Comands.setTOTBLOCK(cursor.getString(7));
+            Comands.setDURATION(cursor.getString(8));
+            Comands.setTONE(cursor.getString(9));
+            Comands.setMSJ(cursor.getString(10));
             cursor.close();
             return true;
         } catch (Exception e) {
@@ -80,6 +90,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DB.close();
         Comands.setID(id);
         Comands.setLOC(loc);
+    }
+
+    public void insertaMecanismos(String id, String sMode, String block, String parBlock,
+                                  String totBlock,  String duration, String tone, String msj){
+        SQLiteDatabase DB = getWritableDatabase();
+        String [] parameters = {id};
+        ContentValues values = new ContentValues();
+        values.put(Utilidades.CAMPO_ID, id);
+        values.put(Utilidades.CAMPO_SMODE, sMode);
+        values.put(Utilidades.CAMPO_BLOCK, block);
+        values.put(Utilidades.CAMPO_PARBLOCK, parBlock);
+        values.put(Utilidades.CAMPO_TOTBLOCK, totBlock);
+        values.put(Utilidades.CAMPO_DURATION, duration);
+        values.put(Utilidades.CAMPO_TONE, tone);
+        values.put(Utilidades.CAMPO_MSJ, msj);
+
+        DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
+        DB.close();
     }
 
     public void bajaUSR(String id){

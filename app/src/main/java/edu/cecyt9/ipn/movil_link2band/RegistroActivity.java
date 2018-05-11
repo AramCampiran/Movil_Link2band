@@ -98,13 +98,4 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
 
         return phrase.toString();
     }
-
-//    private boolean ValidaTodo() {
-//        for (int i = 0; i < 3; i++) {
-//            if (!val.validaRegistro(Campos[i].getText().toString(), Names[i])) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 }
