@@ -90,4 +90,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DB.close();
     }
 
+    public int cuantos(){
+        String countQuery = "SELECT * FROM " + Utilidades.TABLE_NAME;
+        SQLiteDatabase DB = this.getReadableDatabase();
+        Cursor cursor = DB.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
 }

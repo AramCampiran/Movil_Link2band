@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -127,16 +128,15 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         swBloqueo.setOnClickListener(this);
         swSecMod = view.findViewById(R.id.saveMode);
         swSecMod.setOnClickListener(this);
-
-        msj = view.findViewById(R.id.msjInScreen);
-
         btnTone = view.findViewById(R.id.tone);
         btnTone.setOnClickListener(this);
         btnWriteMsj = view.findViewById(R.id.WriteMsj);
         btnWriteMsj.setOnClickListener(this);
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
+
         uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        msj = view.findViewById(R.id.msjInScreen);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         btnLocalizar = view.findViewById(R.id.localizar);
