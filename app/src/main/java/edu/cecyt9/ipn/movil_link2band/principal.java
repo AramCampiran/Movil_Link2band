@@ -60,6 +60,7 @@ public class principal extends AppCompatActivity
         conect = new DatabaseHelper(this);
         if (conect.selectIDs().equals("0")) {
             Long idReturn = conect.alataUSR(id, nom, pass, Comands.getMAIL());
+
             System.out.println("Nueva id " + Comands.getID());
         }else
             System.out.println("ID existente " + Comands.getID());
