@@ -59,10 +59,11 @@ public class principal extends AppCompatActivity
         String pass = intent.getStringExtra("pass");
         conect = new DatabaseHelper(this);
         if (conect.selectIDs().equals("0")) {
-            Long idReturn = conect.alataUSR(id, nom, pass);
+            Long idReturn = conect.alataUSR(id, nom, pass, Comands.getMAIL());
             System.out.println("Nueva id " + Comands.getID());
         }else
             System.out.println("ID existente " + Comands.getID());
+
 
     }
 
@@ -141,22 +142,4 @@ public class principal extends AppCompatActivity
 
     }
 
-    public boolean consulta(String ID){
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this){
-            @Override
-            public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])){
-                    Comands.setNOM(super.Results[1]);
-                    Comands.setPASS(super.Results[2]);
-                    Comands.setMAIL(super.Results[4]);
-                }else{
-                    System.out.println(super.Results[1]);
-                }
-
-            }
-        };
-        ws.execute(new String[]{"ID"},
-                new String[]{id});
-        return false;
-    }
 }

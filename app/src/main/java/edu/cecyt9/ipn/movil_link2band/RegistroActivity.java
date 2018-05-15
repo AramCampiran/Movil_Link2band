@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Extras.Validacion;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
@@ -47,6 +48,7 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                             intent.putExtra("pass", pass.getText().toString());
                             intent.putExtra("id", super.Results[2]);
                             startActivity(intent);
+                            consulta(super.Results[2]);
                         } else {
                             AlertDialog.Builder alert = new AlertDialog.Builder(context);
                             alert.setTitle("Datos inválidos")
@@ -97,5 +99,24 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
         }
 
         return phrase.toString();
+    }
+
+    public boolean consulta(String id){
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this){
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])){
+                    Comands.setNOM(super.Results[1]);
+                    Comands.setPASS(super.Results[2]);
+                    Comands.setMAIL(super.Results[4]);
+                }else{
+                    System.out.println(super.Results[1]);
+                }
+
+            }
+        };
+        ws.execute(new String[]{"ID"},
+                new String[]{id});
+        return false;
     }
 }

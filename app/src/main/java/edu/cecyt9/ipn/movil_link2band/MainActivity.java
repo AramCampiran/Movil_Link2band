@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             intent.putExtra("pass", pass.getText().toString());
                             intent.putExtra("id", super.Results[1]);
                             startActivity(intent);
+                            consulta(super.Results[1]);
                         } else {
                             AlertDialog.Builder alert = new AlertDialog.Builder(context);
                             alert.setTitle("Problema para iniciar sesión")
@@ -123,5 +124,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }).show();
         }
+    }
+
+    public boolean consulta(String id){
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this){
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])){
+                    Comands.setNOM(super.Results[1]);
+                    Comands.setPASS(super.Results[2]);
+                    Comands.setMAIL(super.Results[4]);
+                }else{
+                    System.out.println(super.Results[1]);
+                }
+
+            }
+        };
+        ws.execute(new String[]{"ID"},
+                new String[]{id});
+        return false;
     }
 }

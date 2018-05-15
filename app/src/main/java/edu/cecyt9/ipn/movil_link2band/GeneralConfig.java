@@ -107,7 +107,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         txtName = view.findViewById(R.id.name);
         txtName.setText(Comands.getNOM());
         txtMail = view.findViewById(R.id.mail);
-
+        txtMail.setText(Comands.getMAIL());
         txtPass = view.findViewById(R.id.password);
         txtPass.setText(Comands.getPASS());
         return view;
