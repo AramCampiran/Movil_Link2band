@@ -86,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             final EditText mailInput = new EditText(this);
             mailInput.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-            mailInput.setHint(getString(R.string.prompt_email));
+            mailInput.setHint(getString(R.string.prompt_userandmail));
             final TextInputLayout Layout = new TextInputLayout(this);
             Layout.addView(mailInput);
             Layout.setPadding(20, 10, 20, 0);
 
             final AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Recuperación de contraseña")
-                    .setMessage("Introduce tu correo para restablecer tu contraseña")
+                    .setMessage("Introduce tu email o nombre de usuario para restablecer tu contraseña")
                     .setView(Layout)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override

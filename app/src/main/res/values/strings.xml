@@ -1,6 +1,6 @@
 <resources>
     <!--GENERAL-->
-    <string name="app_name">    L2B Móvil</string>
+    <string name="app_name">L2B Móvil</string>
     <string name="UserName">UserName</string>
     <string name="Pass">Pass</string>
     <string name="Model">Model</string>
@@ -17,6 +17,7 @@
     <!-- Strings related to login -->
     <string name="title_activity_main">Inicio de sesión</string>
     <string name="prompt_username">Nombre de Usuario</string>
+    <string name="prompt_userandmail">Nombre de Usuario o Email</string>
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Entrar</string>
     <string name="label_register">¿No puedes acceder?</string>
