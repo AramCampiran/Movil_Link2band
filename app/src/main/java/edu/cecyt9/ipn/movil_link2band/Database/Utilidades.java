@@ -10,10 +10,11 @@ public class Utilidades {
     public static final String CAMPO_LOC = "LOC";
     public static final String CAMPO_NOM = "NOM";
     public static final String CAMPO_PASS = "PASS";
+    public static final String CAMPO_MAIL = "MAIL";
 
     public static final String CAMPO_SMODE = "SMODE";
     public static final String CAMPO_BLOCK = "BLOK";
-    public static final String CAMPO_PARBLOCK = "PARBLOCK ";
+    public static final String CAMPO_PARBLOCK = "PARBLOCK";
     public static final String CAMPO_TOTBLOCK = "TOTBLOCK";
     public static final String CAMPO_DURATION = "DURATION";
     public static final String CAMPO_TONE = "TONE";
@@ -25,6 +26,7 @@ public class Utilidades {
                                                                               + CAMPO_NOM +" TEXT NOT NULL, "
                                                                               + CAMPO_PASS +" TEXT NOT NULL, "
                                                                               + CAMPO_LOC +" TEXT, "
+                                                                              + CAMPO_MAIL +" TEXT, "
                                                                               + CAMPO_SMODE +" TEXT, "
                                                                               + CAMPO_BLOCK +" TEXT, "
                                                                               + CAMPO_PARBLOCK +" TEXT, "

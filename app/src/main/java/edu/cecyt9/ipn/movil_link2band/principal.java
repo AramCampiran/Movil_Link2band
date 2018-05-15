@@ -1,5 +1,7 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -26,7 +29,7 @@ public class principal extends AppCompatActivity
         SecurityMechanism.OnFragmentInteractionListener {
 
     TextView usuario;
-    String id, nom, pass;
+    String nom, id;
     DatabaseHelper conect;
 
     @Override
@@ -49,18 +52,18 @@ public class principal extends AppCompatActivity
         usuario = view.findViewById(R.id.nomUsr);
         usuario.setText("Hola " + nom);
         navigationView.setNavigationItemSelectedListener(this);
-
         Fragment fragment = new SecurityMechanism();
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
         id = intent.getStringExtra("id");
-        pass = intent.getStringExtra("pass");
+        String pass = intent.getStringExtra("pass");
         conect = new DatabaseHelper(this);
-        if (!conect.consulta(id)) {
+        if (conect.selectIDs().equals("0")) {
             Long idReturn = conect.alataUSR(id, nom, pass);
             System.out.println("Nueva id " + Comands.getID());
         }else
-            System.out.println("ID existente " +Comands.getID());
+            System.out.println("ID existente " + Comands.getID());
+
     }
 
 
@@ -99,7 +102,6 @@ public class principal extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         Fragment fragment = null;
         Boolean fragmentTransaction = false;
         if (id == R.id.nav_mechanism) {
@@ -137,5 +139,24 @@ public class principal extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public boolean consulta(String ID){
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this){
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])){
+                    Comands.setNOM(super.Results[1]);
+                    Comands.setPASS(super.Results[2]);
+                    Comands.setMAIL(super.Results[4]);
+                }else{
+                    System.out.println(super.Results[1]);
+                }
+
+            }
+        };
+        ws.execute(new String[]{"ID"},
+                new String[]{id});
+        return false;
     }
 }

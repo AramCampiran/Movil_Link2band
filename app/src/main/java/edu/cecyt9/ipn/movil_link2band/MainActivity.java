@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.Validacion;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
@@ -28,12 +29,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         user = findViewById(R.id.Log_userInput);
         pass = findViewById(R.id.Log_passInput);
-        System.out.println(Comands.getID());
-        if(Comands.getID() != null){
+
+        DatabaseHelper DB = new DatabaseHelper(this);
+        if(!DB.selectIDs().equals("0")){
+            DB.consulta(Comands.getID());
             Intent intent = new Intent(this, principal.class);
             intent.putExtra("nom", Comands.getNOM());
             intent.putExtra("pass", Comands.getPASS());
-            intent.putExtra("id", Comands.getID());
+            intent.putExtra("mail", Comands.getMAIL());
             startActivity(intent);
         }
     }
@@ -120,9 +123,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }).show();
         }
-    }
-
-    private void WS_LogIn(String usr, String psw) {
-
     }
 }

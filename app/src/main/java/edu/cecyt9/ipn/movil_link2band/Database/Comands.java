@@ -10,6 +10,7 @@ public class Comands {
     private static String LOC;
     private static String NOM;
     private static String PASS;
+    private static String MAIL;
 
     private static String SMODE;
     private static String BLOCK;
@@ -21,12 +22,26 @@ public class Comands {
 
     public  Comands(){}
 
-    public Comands(String ID, String LOC, String NOM, String PASS) {
+    public Comands(String ID, String LOC, String NOM, String PASS, String mail,
+                   String sMode, String block, String parBlock, String totBlock,
+                   String duration, String tone, String msj) {
         Comands.ID = ID;
         Comands.LOC = LOC;
         Comands.NOM = NOM;
         Comands.PASS = PASS;
+        Comands.MAIL = mail;
+        Comands.SMODE = sMode;
+        Comands.BLOCK = block;
+        Comands.PARBLOCK = parBlock;
+        Comands.TOTBLOCK = totBlock;
+        Comands.DURATION = duration;
+        Comands.TONE = tone;
+        Comands.MSJ = msj;
     }
+
+
+
+
 
     public static String getID() {
         return ID;
@@ -40,9 +55,7 @@ public class Comands {
 
     public static void setLOC(String LOC) {Comands.LOC = LOC;}
 
-    public static String getNOM() {
-        return NOM;
-    }
+    public static String getNOM() {return NOM;}
 
     public static void setNOM(String NOM) {Comands.NOM = NOM;}
 
@@ -51,6 +64,12 @@ public class Comands {
     }
 
     public static void setPASS(String PASS) {Comands.PASS = PASS;}
+
+    public static String getMAIL() {
+        return MAIL;
+    }
+
+    public static void setMAIL(String MAIL) {Comands.MAIL = MAIL;}
 
     public static void Clear(){
         Comands.ID = null;

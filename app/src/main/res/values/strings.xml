@@ -1,6 +1,6 @@
 <resources>
     <!--GENERAL-->
-    <string name="app_name">L2B Móvil</string>
+    <string name="app_name">    L2B Móvil</string>
     <string name="UserName">UserName</string>
     <string name="Pass">Pass</string>
     <string name="Model">Model</string>
@@ -28,7 +28,7 @@
     <string name="prompt_repeatpass">Repite la contraseña</string>
     <string name="btn_listo">Listo</string>
 
-    <string name="title_activity_principal">Principal</string>
+    <string name="title_activity_principal">    L2B Móvil</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

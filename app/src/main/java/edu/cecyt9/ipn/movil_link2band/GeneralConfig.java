@@ -105,43 +105,13 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         editPass.setOnClickListener(this);
 
         txtName = view.findViewById(R.id.name);
+        txtName.setText(Comands.getNOM());
         txtMail = view.findViewById(R.id.mail);
+
         txtPass = view.findViewById(R.id.password);
-        consulta();
+        txtPass.setText(Comands.getPASS());
         return view;
 
-    }
-    private void getValues() {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("GetResultado", getActivity()) {
-            @Override
-            public void onSuccessfulConnectionAttempt(Context context) {
-                txtName.setText(super.Results[1]);
-                txtMail.setText(super.Results[2]);
-                String lblpass = "";
-                for (int i = 0 ; i < super.Results[4].length(); i++) {
-                    lblpass += "•";
-                }
-                txtPass.setText(lblpass);
-
-            }
-        };
-        ws.execute(new String[]{"ID"},
-                new String[]{Comands.getID()});
-    }
-
-    private void consulta() {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), getActivity()) {
-            @Override
-            public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])) {
-                    getValues();
-                } else {
-                    Toast.makeText(getContext(), "Consulta mal", Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-        ws.execute(new String[]{"ID"},
-                new String[]{Comands.getID()});
     }
 
     // TODO: Rename method, update argument and hook method into UI event

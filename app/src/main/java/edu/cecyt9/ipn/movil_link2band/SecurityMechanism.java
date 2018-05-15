@@ -21,6 +21,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,8 @@ import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import javax.xml.datatype.Duration;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -58,16 +61,17 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     private static final String ARG_PARAM2 = "param2";
 
     View view;
-    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar, btnGuardar;
+    Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar;
     TextView msj;
     String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
     Switch swBloqueo, swSecMod;
 
-    int Selected = 0;
+    static int Selected = 0;
     final int RQS_RINGTONEPICKER = 1;
     Uri uriRingTone;
     Ringtone ringtone;
+    static String tone;
 
     DevicePolicyManager devicePolicyManager;
     ComponentName component;
@@ -134,8 +138,6 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         btnWriteMsj.setOnClickListener(this);
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
-        btnGuardar = view.findViewById(R.id.guardar);
-        btnGuardar.setOnClickListener(this);
 
         uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         msj = view.findViewById(R.id.msjInScreen);
@@ -168,6 +170,18 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             // for ActivityCompat#requestPermissions for more details.
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
         }
+        
+        if (Comands.getSMODE() != null  ) {
+            swSecMod.setChecked(Boolean.parseBoolean(Comands.getSMODE()));
+            swBloqueo.setChecked(Boolean.parseBoolean(Comands.getBLOCK()));
+            rbParcial.setChecked(Boolean.parseBoolean(Comands.getPARBLOCK()));
+            rbTotal.setChecked(Boolean.parseBoolean(Comands.getTOTBLOCK()));
+            btnDuracion.setText(Comands.getDURATION());
+            btnTone.setText(Comands.getTONE());
+            msj.setText(Comands.getMSJ());
+            tone = Comands.getTONE();
+        }
+        visibilidad();
         return view;
     }
 
@@ -196,6 +210,24 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DatabaseHelper DB = new DatabaseHelper(getContext());
+        DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
+                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
+                msj.getText().toString());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        DatabaseHelper DB = new DatabaseHelper(getContext());
+        DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
+                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
+                msj.getText().toString());
+    }
+
+    @Override
     public void onClick(View v) {
         if (v.getId() == btnDuracion.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
@@ -214,26 +246,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                         }
                     }).show();
         } else if (v.getId() == swSecMod.getId()) {
-            if (swSecMod.isChecked()) {
-                SecMode = "Activado";
-                swBloqueo.setEnabled(true);
-                btnDuracion.setEnabled(true);
-                btnTone.setEnabled(true);
-                btnWriteMsj.setEnabled(true);
-                btnLocalizar.setVisibility(View.VISIBLE);
-                btnBloquear.setVisibility(View.VISIBLE);
-                rbParcial.setEnabled(true);
-                rbTotal.setEnabled(true);
-            } else {
-                SecMode = "Desactivado";
-                swBloqueo.setEnabled(false);
-                btnDuracion.setEnabled(false);
-                btnTone.setEnabled(false);
-                btnWriteMsj.setEnabled(false);
-                btnBloquear.setVisibility(View.INVISIBLE);
-                rbParcial.setEnabled(false);
-                rbTotal.setEnabled(false);
-            }
+            visibilidad();
 
         } else if (v.getId() == swBloqueo.getId()) {
             if (swBloqueo.isChecked()) {
@@ -242,6 +255,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             } else {
                 rbParcial.setVisibility(View.INVISIBLE);
                 rbTotal.setVisibility(View.INVISIBLE);
+                rbParcial.setChecked(false);
+                rbTotal.setChecked(false);
             }
         } else if (v.getId() == btnTone.getId()) {
             if (ringtone != null) {
@@ -347,15 +362,39 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 }
 
             }
-        } else if(v.getId() == btnGuardar.getId()){
-            Boolean sMode = swSecMod.isChecked(),
-                    block = swBloqueo.isChecked(),
-                    parBlock = rbParcial.isChecked(),
-                    totBlock = rbTotal.isChecked(),
-                    duration = btnDuracion.isClickable(),
-                    tone = btnTone.isClickable(),
-                    msj = false;
-            //aki me quede
+        }
+    }
+
+    private void visibilidad() {
+        if (swSecMod.isChecked()) {
+            SecMode = "Activado";
+            swBloqueo.setEnabled(true);
+            btnDuracion.setEnabled(true);
+            btnTone.setEnabled(true);
+            btnWriteMsj.setEnabled(true);
+            btnLocalizar.setVisibility(View.VISIBLE);
+            btnBloquear.setVisibility(View.VISIBLE);
+            rbParcial.setEnabled(true);
+            rbTotal.setEnabled(true);
+        } else {
+            SecMode = "Desactivado";
+            swBloqueo.setEnabled(false);
+            btnDuracion.setEnabled(false);
+            btnTone.setEnabled(false);
+            btnWriteMsj.setEnabled(false);
+            btnBloquear.setVisibility(View.INVISIBLE);
+            rbParcial.setEnabled(false);
+            rbTotal.setEnabled(false);
+        }
+        if (swBloqueo.isChecked()) {
+            rbParcial.setVisibility(View.VISIBLE);
+            rbTotal.setVisibility(View.VISIBLE);
+        }else{
+            rbParcial.setVisibility(View.INVISIBLE);
+            rbTotal.setVisibility(View.INVISIBLE);
+            rbParcial.setChecked(false);
+            rbTotal.setChecked(false);
+
         }
     }
 
@@ -470,6 +509,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             ringtone = RingtoneManager.getRingtone(getContext(), uri);
             btnTone.setText(ringtone.getTitle(getContext()));
+            tone = ringtone.getTitle(getContext());
         } else if (REQUEST_ENABLE == requestCode) {
             super.onActivityResult(requestCode, resultCode, data);
         }

@@ -33,16 +33,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(DB);
     }
 
-    public Long alataUSR(String id, String nom, String pass) {
+    public Long alataUSR(String id, String nom, String pass, String mail) {
         SQLiteDatabase DB = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Utilidades.CAMPO_ID, id);
         values.put(Utilidades.CAMPO_NOM, nom);
         values.put(Utilidades.CAMPO_PASS, pass);
+        values.put(Utilidades.CAMPO_MAIL, mail);
         Long idResult = DB.insert(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID, values);
         Comands.setID(id);
         Comands.setNOM(nom);
         Comands.setPASS(pass);
+        Comands.setMAIL(mail);
         Comands.setLOC("null");
         DB.close();
         System.out.println("usuario registrado con exito");
@@ -53,29 +55,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase DB = getWritableDatabase();
         String[] parameters = {id};
         //Arreglo para campos que quieres que regresen
-        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS,
+        String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS, Utilidades.CAMPO_MAIL,
                             Utilidades.CAMPO_SMODE, Utilidades.CAMPO_BLOCK, Utilidades.CAMPO_PARBLOCK, Utilidades.CAMPO_TOTBLOCK, Utilidades.CAMPO_DURATION,
                             Utilidades.CAMPO_TONE, Utilidades.CAMPO_MSJ};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
             cursor.moveToFirst();
-            Comands.setID(cursor.getString(0));
-            Comands.setLOC(cursor.getString(1));
-            Comands.setNOM(cursor.getString(2));
-            Comands.setPASS(cursor.getString(3));
+            Comands.setID(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_ID)));
+            Comands.setLOC(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_LOC)));
+            Comands.setNOM(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_NOM)));
+            Comands.setPASS(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PASS)));
+            Comands.setMAIL(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MAIL)));
 
-            Comands.setSMODE(cursor.getString(4));
-            Comands.setBLOCK(cursor.getString(5));
-            Comands.setPARBLOCK(cursor.getString(6));
-            Comands.setTOTBLOCK(cursor.getString(7));
-            Comands.setDURATION(cursor.getString(8));
-            Comands.setTONE(cursor.getString(9));
-            Comands.setMSJ(cursor.getString(10));
+            Comands.setSMODE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_SMODE)));
+            Comands.setBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_BLOCK)));
+            Comands.setPARBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PARBLOCK)));
+            Comands.setTOTBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TOTBLOCK)));
+            Comands.setDURATION(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_DURATION)));
+            Comands.setTONE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TONE)));
+            Comands.setMSJ(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MSJ)));
             cursor.close();
             return true;
         } catch (Exception e) {
-            System.out.println("No existe usr");
+            System.out.println("No existe usr" + e);
             return false;
         }
     }
@@ -108,6 +111,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
         DB.close();
+
+        Comands.setSMODE(sMode);
+        Comands.setBLOCK(block);
+        Comands.setPARBLOCK(parBlock);
+        Comands.setTOTBLOCK(totBlock);
+        Comands.setDURATION(duration);
+        Comands.setTONE(tone);
+        Comands.setMSJ(msj);
     }
 
     public void bajaUSR(String id){
@@ -116,15 +127,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DB.delete(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID + "=?", parameters);
         System.out.println("Usr Eliminado");
         DB.close();
+        Comands comands = new Comands(null,null,null, null, null, null, null, null, null, null, null, null);
     }
 
-    public int cuantos(){
-        String countQuery = "SELECT * FROM " + Utilidades.TABLE_NAME;
-        SQLiteDatabase DB = this.getReadableDatabase();
-        Cursor cursor = DB.rawQuery(countQuery, null);
-        int count = cursor.getCount();
+    public String selectIDs(){
+        String respuesta = "0";
+        String selectQuery = "SELECT * FROM " + Utilidades.TABLE_NAME;
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            Comands.setID(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_ID)));
+            respuesta = Comands.getID();
+        }
         cursor.close();
-        return count;
+        return respuesta;
     }
 
 }
