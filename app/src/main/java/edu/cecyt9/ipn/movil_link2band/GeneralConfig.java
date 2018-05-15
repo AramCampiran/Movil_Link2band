@@ -221,7 +221,10 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    DatabaseHelper DB = new DatabaseHelper(getActivity());
+                                    DB.bajaUSR(Comands.getID());
                                     startActivity(new Intent(getActivity(), MainActivity.class));
+
                                 }
                             }).show();
                 } else {
