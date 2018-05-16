@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         user = findViewById(R.id.Log_userInput);
         pass = findViewById(R.id.Log_passInput);
-
         DatabaseHelper DB = new DatabaseHelper(this);
         if(!DB.selectIDs().equals("0")){
             DB.consulta(Comands.getID());
