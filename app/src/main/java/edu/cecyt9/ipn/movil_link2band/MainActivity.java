@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             final AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Recuperación de contraseña")
-                    .setMessage("Introduce tu email o nombre de usuario para restablecer tu contraseña")
+                    .setMessage("Completa el campo para restablecer tu contraseña")
                     .setView(Layout)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override

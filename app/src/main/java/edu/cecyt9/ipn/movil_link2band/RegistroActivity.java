@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
 
@@ -33,6 +32,8 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
         pass = findViewById(R.id.Reg_passInput);
         repeatpass = findViewById(R.id.Reg_repeatpassInput);
         val = new Validacion();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -119,4 +120,5 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                 new String[]{id});
         return false;
     }
+
 }
