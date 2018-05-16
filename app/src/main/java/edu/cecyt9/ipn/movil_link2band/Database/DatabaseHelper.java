@@ -61,20 +61,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
-            cursor.moveToFirst();
-            Comands.setID(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_ID)));
-            Comands.setLOC(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_LOC)));
-            Comands.setNOM(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_NOM)));
-            Comands.setPASS(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PASS)));
-            Comands.setMAIL(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MAIL)));
+            if (cursor.moveToFirst()) {
+                Comands.setID(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_ID)));
+                Comands.setLOC(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_LOC)));
+                Comands.setNOM(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_NOM)));
+                Comands.setPASS(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PASS)));
+                Comands.setMAIL(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MAIL)));
 
-            Comands.setSMODE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_SMODE)));
-            Comands.setBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_BLOCK)));
-            Comands.setPARBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PARBLOCK)));
-            Comands.setTOTBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TOTBLOCK)));
-            Comands.setDURATION(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_DURATION)));
-            Comands.setTONE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TONE)));
-            Comands.setMSJ(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MSJ)));
+                Comands.setSMODE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_SMODE)));
+                Comands.setBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_BLOCK)));
+                Comands.setPARBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PARBLOCK)));
+                Comands.setTOTBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TOTBLOCK)));
+                Comands.setDURATION(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_DURATION)));
+                Comands.setTONE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TONE)));
+                Comands.setMSJ(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MSJ)));
+            }
             cursor.close();
             return true;
         } catch (Exception e) {
@@ -127,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         DB.delete(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID + "=?", parameters);
         System.out.println("Usr Eliminado");
         DB.close();
-        Comands comands = new Comands(null,null,null, null, null, null, null, null, null, null, null, null);
+        Comands.Clear();
     }
 
     public String selectIDs(){

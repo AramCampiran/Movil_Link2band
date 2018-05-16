@@ -22,27 +22,6 @@ public class Comands {
 
     public  Comands(){}
 
-    public Comands(String ID, String LOC, String NOM, String PASS, String mail,
-                   String sMode, String block, String parBlock, String totBlock,
-                   String duration, String tone, String msj) {
-        Comands.ID = ID;
-        Comands.LOC = LOC;
-        Comands.NOM = NOM;
-        Comands.PASS = PASS;
-        Comands.MAIL = mail;
-        Comands.SMODE = sMode;
-        Comands.BLOCK = block;
-        Comands.PARBLOCK = parBlock;
-        Comands.TOTBLOCK = totBlock;
-        Comands.DURATION = duration;
-        Comands.TONE = tone;
-        Comands.MSJ = msj;
-    }
-
-
-
-
-
     public static String getID() {
         return ID;
     }
@@ -76,6 +55,14 @@ public class Comands {
         Comands.LOC = null;
         Comands.NOM = null;
         Comands.PASS = null;
+        Comands.MAIL = null;
+        Comands.SMODE = null;
+        Comands.BLOCK = null;
+        Comands.PARBLOCK = null;
+        Comands.TOTBLOCK = null;
+        Comands.DURATION = null;
+        Comands.TONE = null;
+        Comands.MSJ = null;
     }
 
     public static String getSMODE() {return SMODE;}

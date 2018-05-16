@@ -5,6 +5,9 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,9 +23,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -44,6 +51,7 @@ import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 import static android.app.Activity.RESULT_OK;
+import static android.os.UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS;
 
 
 /**
@@ -181,7 +189,25 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             msj.setText(Comands.getMSJ());
             tone = Comands.getTONE();
         }
+
         visibilidad();
+
+        BluetoothManager bluetoothManager = (BluetoothManager)getContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        if (!bluetoothAdapter.isEnabled()){
+            bluetoothAdapter.enable();
+        }
+        BluetoothProfile.ServiceListener bl = new BluetoothProfile.ServiceListener() {
+            @Override
+            public void onServiceConnected(int i, BluetoothProfile bluetoothProfile) {
+                System.out.println("Alguien no se conecto");
+            }
+
+            @Override
+            public void onServiceDisconnected(int i) {
+                System.out.println("Alguien se desconecto");
+            }
+        };
         return view;
     }
 
@@ -227,6 +253,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 msj.getText().toString());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onClick(View v) {
         if (v.getId() == btnDuracion.getId()) {
@@ -264,7 +291,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             }
             ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-            startActivityForResult(intent, RQS_RINGTONEPICKER);
+                startActivityForResult(intent, RQS_RINGTONEPICKER);
         } else if (v.getId() == btnWriteMsj.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -284,28 +311,28 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                     })
                     .setNegativeButton("cancelar", null).show();
         } else if (v.getId() == btnBloquear.getId()) {
+
             devicePolicyManager = (DevicePolicyManager) getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
             component = new ComponentName(getContext(), Darclass.class);
-            if (!devicePolicyManager.isAdminActive(component)) {
+            boolean active = devicePolicyManager.isAdminActive(component);
+
+            UserManager userManager = (UserManager) getContext().getSystemService(Context.USER_SERVICE);
+            UserHandle io = android.os.Process.myUserHandle();
+            long serialNumber = userManager.getSerialNumberForUser(io);
+            System.out.println(serialNumber);
+
+            if (!active) {
                 Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                 intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
+                //intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "dame permiso prro");
                 startActivityForResult(intent, REQUEST_ENABLE);
             } else {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                alert.setMessage("¿Esta seguro de bloquear?")
-                        .setPositiveButton("si", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if (!devicePolicyManager.isAdminActive(component)) {
-                                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
-                                    startActivityForResult(intent, REQUEST_ENABLE);
-                                } else {
-                                    devicePolicyManager.lockNow();
-                                }
-                            }
-                        })
-                        .setNegativeButton("no", null).show();
+                try {
+                    ringtone.play();
+                    devicePolicyManager.lockNow();
+                } catch (Exception e) {
+                    System.out.println("No ps no se pudo: " + e);
+                }
             }
 
         } else if (v.getId() == btnLocalizar.getId()) {
@@ -515,6 +542,15 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         }
     }
 
+    @Override
+    public void onResume() {
+        if (ringtone != null) {
+            if (ringtone.isPlaying()){
+                ringtone.stop();
+            }
+        }
+        super.onResume();
+    }
 
     /**
      * This interface must be implemented by activities that contain this

@@ -57,10 +57,10 @@ public class principal extends AppCompatActivity
 
         id = intent.getStringExtra("id");
         String pass = intent.getStringExtra("pass");
+        String mail = intent.getStringExtra("mail");
         conect = new DatabaseHelper(this);
         if (conect.selectIDs().equals("0")) {
-            Long idReturn = conect.alataUSR(id, nom, pass, Comands.getMAIL());
-
+            Long idReturn = conect.alataUSR(id, nom, pass, mail);
             System.out.println("Nueva id " + Comands.getID());
         }else
             System.out.println("ID existente " + Comands.getID());
@@ -123,7 +123,6 @@ public class principal extends AppCompatActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             conect = new DatabaseHelper(getApplicationContext());
                             conect.bajaUSR(Comands.getID());
-                            Comands.Clear();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();

@@ -22,6 +22,7 @@ import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     EditText user, pass;
+    String mail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +30,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         user = findViewById(R.id.Log_userInput);
         pass = findViewById(R.id.Log_passInput);
+
+
         DatabaseHelper DB = new DatabaseHelper(this);
-        if(!DB.selectIDs().equals("0")){
+        if (!DB.selectIDs().equals("0")) {
             DB.consulta(Comands.getID());
             Intent intent = new Intent(this, principal.class);
             intent.putExtra("nom", Comands.getNOM());
@@ -50,12 +53,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
-                            Intent intent = new Intent(context, principal.class);
-                            intent.putExtra("nom", user.getText().toString());
-                            intent.putExtra("pass", pass.getText().toString());
-                            intent.putExtra("id", super.Results[1]);
-                            startActivity(intent);
-                            consulta(super.Results[1]);
+                            if (consulta(super.Results[1])) {
+                                Intent intent = new Intent(context, principal.class);
+                                intent.putExtra("nom", user.getText().toString());
+                                intent.putExtra("pass", pass.getText().toString());
+                                intent.putExtra("id", super.Results[1]);
+                                intent.putExtra("mail", Comands.getMAIL());
+                                startActivity(intent);
+                            } else
+                                System.out.println("No pus no se pudo");
+
                         } else {
                             AlertDialog.Builder alert = new AlertDialog.Builder(context);
                             alert.setTitle("Problema para iniciar sesión")
@@ -69,8 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 };
-                ws.execute(new String[]{getString(R.string.UserName), getString(R.string.Pass)},
-                        new String[]{user.getText().toString(), pass.getText().toString()});
+                ws.execute(new String[]{getString(R.string.UserName), getString(R.string.Pass)}, new String[]{user.getText().toString(), pass.getText().toString()});
             } else {
                 val.MarkTheError();
             }
@@ -85,14 +91,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             final EditText mailInput = new EditText(this);
             mailInput.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-            mailInput.setHint(getString(R.string.prompt_userandmail));
+            mailInput.setHint(getString(R.string.prompt_email));
             final TextInputLayout Layout = new TextInputLayout(this);
             Layout.addView(mailInput);
             Layout.setPadding(20, 10, 20, 0);
 
             final AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Recuperación de contraseña")
-                    .setMessage("Completa el campo para restablecer tu contraseña")
+                    .setMessage("Introduce tu correo para restablecer tu contraseña")
                     .setView(Layout)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
@@ -125,15 +131,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public boolean consulta(String id){
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this){
+    public boolean consulta(String id) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])){
-                    Comands.setNOM(super.Results[1]);
-                    Comands.setPASS(super.Results[2]);
-                    Comands.setMAIL(super.Results[4]);
-                }else{
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    mail = super.Results[4];
+                    System.out.println("Bien papu");
+                } else {
                     System.out.println(super.Results[1]);
                 }
 
@@ -141,6 +146,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
         ws.execute(new String[]{"ID"},
                 new String[]{id});
-        return false;
+
+//        System.out.println("Mail " + Comands.getMAIL() +"\n"+"Nom " + Comands.getNOM()+ "\n" + "Pass "+ Comands.getPASS());
+        System.out.println(mail);
+        if (mail != null)
+            return true;
+        else
+            return false;
     }
 }

@@ -44,12 +44,13 @@ public class RegistroActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
+                            consulta(super.Results[2]);
                             Intent intent = new Intent(context, principal.class);
                             intent.putExtra("nom", user.getText().toString());
                             intent.putExtra("pass", pass.getText().toString());
                             intent.putExtra("id", super.Results[2]);
+                            intent.putExtra("mail", mail.getText().toString());
                             startActivity(intent);
-                            consulta(super.Results[2]);
                         } else {
                             AlertDialog.Builder alert = new AlertDialog.Builder(context);
                             alert.setTitle("Datos inválidos")
