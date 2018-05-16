@@ -41,8 +41,6 @@
     <string name="title_activity_settings">Settings</string>
 
 
-
-
-    <item name="visible" type="id"/>
-    <item name="masked" type="id"/>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>

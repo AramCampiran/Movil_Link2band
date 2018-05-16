@@ -126,6 +126,9 @@ public class principal extends AppCompatActivity
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();
+        } else if (id == R.id.nav_blue) {
+            fragment = new conectividad();
+            fragmentTransaction = true;
         }
 
         if (fragmentTransaction) {
