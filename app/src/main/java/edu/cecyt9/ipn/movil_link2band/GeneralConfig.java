@@ -307,7 +307,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                             }
-                        }).show();
+                        });
             }
         };
 

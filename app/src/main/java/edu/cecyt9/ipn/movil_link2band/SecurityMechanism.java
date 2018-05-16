@@ -27,25 +27,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.UserHandle;
 import android.os.UserManager;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import javax.xml.datatype.Duration;
-
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
@@ -425,23 +418,17 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     }
 
     private void actualizaLoc(String loc, String stat, String mode) {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ActualizarMethod), getActivity()) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("SetDatosMovil", getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(context);
                     alert.setMessage("Datos enviados")
                             .setPositiveButton("Ok", null).show();
                     System.out.println("Datos enviados");
-                } else {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                    alert.setMessage("Error al enviar datos")
-                            .setPositiveButton("Ok", null).show();
-                }
             }
         };
-        ws.execute(new String[]{"Loc", "Status", "secureMode", "ID"},
-                new String[]{loc, stat, mode, Comands.getID()});
+        ws.execute(new String[]{"ID", "Loc", "Status", "secureMode"},
+                new String[]{Comands.getID(), loc, stat, mode});
     }
 
     private LocationListener locationListenerGPS = new LocationListener() {

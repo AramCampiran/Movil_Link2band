@@ -26,7 +26,8 @@ import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GeneralConfig.OnFragmentInteractionListener,
-        SecurityMechanism.OnFragmentInteractionListener {
+        SecurityMechanism.OnFragmentInteractionListener,
+        conectividad.OnFragmentInteractionListener{
 
     TextView usuario;
     String nom, id;
@@ -107,11 +108,13 @@ public class principal extends AppCompatActivity
         Fragment fragment = null;
         Boolean fragmentTransaction = false;
         if (id == R.id.nav_mechanism) {
-            // Handle the camera action
             fragment = new SecurityMechanism();
             fragmentTransaction = true;
         } else if (id == R.id.nav_settings) {
             fragment = new GeneralConfig();
+            fragmentTransaction = true;
+        } else if (id == R.id.nav_blue){
+            fragment = new conectividad();
             fragmentTransaction = true;
         } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -127,9 +130,6 @@ public class principal extends AppCompatActivity
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();
-        }else if (id == R.id.nav_blue){
-            fragment = new conectividad();
-            fragmentTransaction = true;
         }
 
         if (fragmentTransaction) {

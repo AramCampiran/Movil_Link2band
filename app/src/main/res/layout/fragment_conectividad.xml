@@ -1,28 +1,13 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/ScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.cecyt9.ipn.movil_link2band.conectividad">
 
     <!-- TODO: Update blank fragment layout -->
-
-    <LinearLayout
-        android:id="@+id/LinearLayout"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment" />
 
-        <TextView
-            android:id="@+id/TextView1"
-            android:layout_width="match_parent"
-            android:layout_height="40sp"
-            android:gravity="center_vertical"
-            android:paddingStart="10sp"
-            android:paddingTop="10sp"
-            android:text="@string/label_vinculados"
-            android:textColor="@color/colorAccentII"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-</ScrollView>
+</FrameLayout>
