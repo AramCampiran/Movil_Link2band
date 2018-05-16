@@ -90,7 +90,7 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
         }
     }
 
-    private void onFailedConnectionAttempt(Context context) {
+    public void onFailedConnectionAttempt(Context context) {
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
         alert.setTitle("Ha ocurrido un error")
                 .setMessage("No ha sido posible conectarse\nRevisa tu conexión a internet")
@@ -98,7 +98,7 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
-                }).show();
+                });
     }
 
     public void onSuccessfulConnectionAttempt(Context context) {}

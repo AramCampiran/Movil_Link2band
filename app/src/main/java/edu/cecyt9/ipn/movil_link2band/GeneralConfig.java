@@ -105,11 +105,18 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         editPass.setOnClickListener(this);
 
         txtName = view.findViewById(R.id.name);
-        txtName.setText(Comands.getNOM());
+
         txtMail = view.findViewById(R.id.mail);
-        txtMail.setText(Comands.getMAIL());
+
         txtPass = view.findViewById(R.id.password);
-        txtPass.setText(Comands.getPASS());
+
+        DatabaseHelper DB = new DatabaseHelper(getActivity());
+        if (!consulta(Comands.getID())) {
+            txtName.setText(Comands.getNOM());
+            txtPass.setText(Comands.getPASS());
+            txtMail.setText(Comands.getMAIL());
+        }
+
         return view;
 
     }
@@ -274,6 +281,41 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         ws.execute(new String[]{"ID", "Pass"},
                 new String[]{Comands.getID(), contra});
 
+    }
+
+    private boolean consulta(String id) {
+        final Boolean[] correct = {false};
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), getActivity()) {
+            @Override
+            public void onSuccessfulConnectionAttempt(Context context) {
+                if (Boolean.parseBoolean(super.Results[0])) {
+                    Comands.setNOM(super.Results[1]);
+                    Comands.setPASS(super.Results[2]);
+                    Comands.setMAIL(super.Results[4]);
+                    correct[0] = true;
+                } else {
+                    System.out.println(super.Results[1]);
+                }
+            }
+
+            @Override
+            public void onFailedConnectionAttempt(Context context){
+                android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(context);
+                alert.setTitle("Ha ocurrido un error")
+                        .setMessage("pito")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        }).show();
+            }
+        };
+
+        ws.execute(new String[]{"ID"},
+                new String[]{id});
+
+//        System.out.println("Mail " + Comands.getMAIL() +"\n"+"Nom " + Comands.getNOM()+ "\n" + "Pass "+ Comands.getPASS());
+        return correct[0];
     }
 
 

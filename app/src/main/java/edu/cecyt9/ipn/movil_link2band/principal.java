@@ -116,17 +116,18 @@ public class principal extends AppCompatActivity
         } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Cerrar sesion")
-                    .setMessage("¿Esta seguro de cerrar sesión?")
+                    .setMessage("¿Esta seguro de cerrar sesión? \n se perderán tus preferencias de los mecanismos de seguridad")
                     .setNegativeButton("no", null)
                     .setPositiveButton("si", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             conect = new DatabaseHelper(getApplicationContext());
                             conect.bajaUSR(Comands.getID());
+                            finish();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }
                     }).show();
-        } else if (id == R.id.nav_blue) {
+        }else if (id == R.id.nav_blue){
             fragment = new conectividad();
             fragmentTransaction = true;
         }

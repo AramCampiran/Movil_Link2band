@@ -51,7 +51,6 @@ import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 import static android.app.Activity.RESULT_OK;
-import static android.os.UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS;
 
 
 /**
@@ -178,8 +177,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             // for ActivityCompat#requestPermissions for more details.
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
         }
-        
-        if (Comands.getSMODE() != null  ) {
+
+        if (Comands.getSMODE() != null) {
             swSecMod.setChecked(Boolean.parseBoolean(Comands.getSMODE()));
             swBloqueo.setChecked(Boolean.parseBoolean(Comands.getBLOCK()));
             rbParcial.setChecked(Boolean.parseBoolean(Comands.getPARBLOCK()));
@@ -192,9 +191,9 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
 
         visibilidad();
 
-        BluetoothManager bluetoothManager = (BluetoothManager)getContext().getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager bluetoothManager = (BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
-        if (!bluetoothAdapter.isEnabled()){
+        if (!bluetoothAdapter.isEnabled()) {
             bluetoothAdapter.enable();
         }
         BluetoothProfile.ServiceListener bl = new BluetoothProfile.ServiceListener() {
@@ -291,7 +290,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             }
             ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-                startActivityForResult(intent, RQS_RINGTONEPICKER);
+            startActivityForResult(intent, RQS_RINGTONEPICKER);
         } else if (v.getId() == btnWriteMsj.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -416,7 +415,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         if (swBloqueo.isChecked()) {
             rbParcial.setVisibility(View.VISIBLE);
             rbTotal.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             rbParcial.setVisibility(View.INVISIBLE);
             rbTotal.setVisibility(View.INVISIBLE);
             rbParcial.setChecked(false);
@@ -545,7 +544,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         if (ringtone != null) {
-            if (ringtone.isPlaying()){
+            if (ringtone.isPlaying()) {
                 ringtone.stop();
             }
         }

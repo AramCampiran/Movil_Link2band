@@ -53,16 +53,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onSuccessfulConnectionAttempt(Context context) {
                         if (Boolean.parseBoolean(super.Results[0])) {
-                            if (consulta(super.Results[1])) {
-                                Intent intent = new Intent(context, principal.class);
-                                intent.putExtra("nom", user.getText().toString());
-                                intent.putExtra("pass", pass.getText().toString());
-                                intent.putExtra("id", super.Results[1]);
-                                intent.putExtra("mail", Comands.getMAIL());
-                                startActivity(intent);
-                            } else
-                                System.out.println("No pus no se pudo");
-
+                            Intent intent = new Intent(context, principal.class);
+                            intent.putExtra("id", super.Results[1]);
+                            intent.putExtra("nom", super.Results[2]);
+                            intent.putExtra("pass", pass.getText().toString());
+                            intent.putExtra("mail", super.Results[3]);
+                            startActivity(intent);
                         } else {
                             AlertDialog.Builder alert = new AlertDialog.Builder(context);
                             alert.setTitle("Problema para iniciar sesión")
@@ -129,29 +125,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }).show();
         }
-    }
-
-    public boolean consulta(String id) {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.ConsultaMethod), this) {
-            @Override
-            public void onSuccessfulConnectionAttempt(Context context) {
-                if (Boolean.parseBoolean(super.Results[0])) {
-                    mail = super.Results[4];
-                    System.out.println("Bien papu");
-                } else {
-                    System.out.println(super.Results[1]);
-                }
-
-            }
-        };
-        ws.execute(new String[]{"ID"},
-                new String[]{id});
-
-//        System.out.println("Mail " + Comands.getMAIL() +"\n"+"Nom " + Comands.getNOM()+ "\n" + "Pass "+ Comands.getPASS());
-        System.out.println(mail);
-        if (mail != null)
-            return true;
-        else
-            return false;
     }
 }
