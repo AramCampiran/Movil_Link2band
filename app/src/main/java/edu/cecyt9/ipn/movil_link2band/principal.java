@@ -1,6 +1,8 @@
 package edu.cecyt9.ipn.movil_link2band;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -17,7 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -29,7 +36,7 @@ public class principal extends AppCompatActivity
         SecurityMechanism.OnFragmentInteractionListener,
         conectividad.OnFragmentInteractionListener{
 
-    TextView usuario;
+    TextView usuario, BTout;
     String nom, id;
     DatabaseHelper conect;
 
@@ -52,6 +59,10 @@ public class principal extends AppCompatActivity
         nom = intent.getStringExtra("nom");
         usuario = view.findViewById(R.id.nomUsr);
         usuario.setText("Hola " + nom);
+
+//        BTout = view.findViewById(R.id.BToutput);
+        blutut();
+
         navigationView.setNavigationItemSelectedListener(this);
         Fragment fragment = new SecurityMechanism();
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
@@ -69,6 +80,18 @@ public class principal extends AppCompatActivity
 
     }
 
+
+    private void blutut() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+//        List<String> s = new ArrayList<String>();
+        System.out.println("----------------------DISPOSITIVOS BLUTUT----------------------");
+        for(BluetoothDevice bt : pairedDevices)
+            System.out.println(bt.getName());
+//            s.add(bt.getName());
+
+    }
 
 
     @Override
