@@ -36,24 +36,15 @@ import java.util.Set;
 public class conectividad extends Fragment implements AbsListView.OnItemClickListener{
 
     View view;
-    ArrayList<String> vinculados;
+    ArrayList<String> vinculados, cercanos;
     ListView list, list2;
     ToggleButton btnAnalizar;
     BluetoothAdapter bluetoothAdapter;
     int REQUEST_ENABLE = 0;
 
-    /*private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress(), "false");
-                bluetoothAdapter.add(newDevice);
-            }
-        }
-    };*/
+    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> adapter2;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -106,7 +97,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         list2 = view.findViewById(R.id.lista2);
         btnAnalizar = view.findViewById(R.id.analizar);
         vinculados = new ArrayList<String>();
-
+        cercanos = new ArrayList<String>();
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
@@ -114,48 +105,74 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             startActivityForResult(intent, REQUEST_ENABLE);
         }
 
-        bluetooth();
+        bluetooth("vinculados");
+
+        /*String[] values2 =  {"poio", "es", "bien", "pvto"};
+        final ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text2, values2);
+        //list2.setAdapter(adapter2);*/
+
+        final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    cercanos.add(String.valueOf(device.getName()));
+                    System.out.println(device.getName());
+                    bluetooth("cercanos");
+                }
+            }
+        };
 
         btnAnalizar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-/*                if (btnAnalizar.isChecked()) {
-                    mAdapter.clear();
-                    getActivity().registerReceiver(bReciever, filter);
-                    bTAdapter.startDiscovery();
+                if (btnAnalizar.isChecked()) {
+                    cercanos.clear();
+                    getActivity().registerReceiver(broadcastReceiver, filter);
+                    bluetoothAdapter.startDiscovery();
                 } else {
-                    getActivity().unregisterReceiver(bReciever);
-                    bTAdapter.cancelDiscovery();
-                }*/
+                    getActivity().registerReceiver(broadcastReceiver, filter);
+                    bluetoothAdapter.cancelDiscovery();
+                }
             }
         });
+
+
         return view;
     }
 
-    private void bluetooth() {
-        Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
-        for (BluetoothDevice pairedDevice : pairedDevicesList) {
-            vinculados.add(String.valueOf(pairedDevice.getName()));
-        }
-        String[] values =  new String[vinculados.size()];
-        for (int i = 0; i < vinculados.size(); i++) {
-            String aux = vinculados.get(i);
-            values[i] = aux;
+    private void bluetooth(String tipo) {
+
+        if (tipo.equals("vinculados")) {
+            Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
+            for (BluetoothDevice pairedDevice : pairedDevicesList) {
+                vinculados.add(String.valueOf(pairedDevice.getName()));
+            }
+            String[] values =  new String[vinculados.size()];
+            for (int i = 0; i < vinculados.size(); i++) {
+                values[i] = vinculados.get(i);
+            }
+
+            adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
+            list.setAdapter(adapter);
+        } else {
+            String[] values =  new String[cercanos.size()];
+            for (int i = 0; i < cercanos.size(); i++) {
+                values[i] = cercanos.get(i);
+            }
+            adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
+            list2.setAdapter(adapter2);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        list.setAdapter(adapter);
-
-        String[] values2 =  {"poio", "es", "bien", "pvto"};
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text2, values2);
-        list2.setAdapter(adapter2);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (REQUEST_ENABLE == requestCode) {
-            bluetooth();
+            bluetooth("vinculados");
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -300,7 +300,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
             @Override
             public void onFailedConnectionAttempt(Context context){
-                android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(context);
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
                 alert.setTitle("Ha ocurrido un error")
                         .setMessage("pito")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

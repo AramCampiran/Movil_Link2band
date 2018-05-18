@@ -308,13 +308,13 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         } else if (v.getId() == btnWriteMsj.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
+            final EditText txt = view.findViewById(R.id.msj);
             final View view = inflater.inflate(R.layout.alert, null);
             alert.setTitle("Mensaje en pantalla")
                     .setView(view)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            EditText txt = view.findViewById(R.id.msj);
                             if (!txt.getText().toString().equals("")) {
                                 msj.setText("Mensaje: " + txt.getText().toString());
                             } else {
@@ -422,7 +422,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             btnDuracion.setEnabled(false);
             btnTone.setEnabled(false);
             btnWriteMsj.setEnabled(false);
-            btnBloquear.setVisibility(View.INVISIBLE);
+            btnBloquear.setVisibility(View.GONE);
             rbParcial.setEnabled(false);
             rbTotal.setEnabled(false);
         }
