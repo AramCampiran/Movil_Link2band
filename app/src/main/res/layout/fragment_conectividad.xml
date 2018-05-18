@@ -40,7 +40,8 @@
             android:id="@+id/analizar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textOff="Analizar"/>
+            android:textOff="Analizar"
+            android:textOn="Detener"/>
     </LinearLayout>
 
     <ListView
