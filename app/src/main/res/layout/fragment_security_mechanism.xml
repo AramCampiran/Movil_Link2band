@@ -45,14 +45,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="7mm"
                 android:text="Parcial"
-                android:visibility="invisible" />
+                android:visibility="gone" />
 
             <RadioButton
                 android:id="@+id/total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Total"
-                android:visibility="invisible" />
+                android:visibility="gone" />
         </RadioGroup>
         <LinearLayout
             android:layout_width="wrap_content"

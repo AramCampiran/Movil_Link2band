@@ -3,9 +3,11 @@ package edu.cecyt9.ipn.movil_link2band;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.ComponentName;
@@ -28,10 +30,15 @@ import android.os.Bundle;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -39,6 +46,11 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Set;
+
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
@@ -54,7 +66,7 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link SecurityMechanism#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SecurityMechanism extends Fragment implements View.OnClickListener {
+public class SecurityMechanism extends Fragment implements View.OnClickListener, conectividad.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -184,24 +196,33 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
 
         visibilidad();
 
-        BluetoothManager bluetoothManager = (BluetoothManager) getContext().getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        final NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.nav_mechanism);
+        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter.enable();
-        }
-        BluetoothProfile.ServiceListener bl = new BluetoothProfile.ServiceListener() {
-            @Override
-            public void onServiceConnected(int i, BluetoothProfile bluetoothProfile) {
-                System.out.println("Alguien no se conecto");
-            }
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle("¡no hay conexion!")
+                    .setMessage("al parecer no estas conectado a nunguna pulsera \n ¿Quieres conectarte?")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Fragment fragment = new conectividad();
+                            getActivity().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.contentPrincipal, fragment)
+                                    .addToBackStack(null)
+                                    .commit();
+                            toolbar.setTitle("Conectividad");
+                            navigationView.setCheckedItem(R.id.nav_blue);
 
-            @Override
-            public void onServiceDisconnected(int i) {
-                System.out.println("Alguien se desconecto");
-            }
-        };
+                        }
+                    })
+                    .setNegativeButton("no", null)
+                    .show();
+        }
         return view;
     }
+
 
     // TODO: Rename method, update argument an"ld hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -272,8 +293,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
                 rbParcial.setVisibility(View.VISIBLE);
                 rbTotal.setVisibility(View.VISIBLE);
             } else {
-                rbParcial.setVisibility(View.INVISIBLE);
-                rbTotal.setVisibility(View.INVISIBLE);
+                rbParcial.setVisibility(View.GONE);
+                rbTotal.setVisibility(View.GONE);
                 rbParcial.setChecked(false);
                 rbTotal.setChecked(false);
             }
@@ -405,12 +426,13 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
             rbParcial.setEnabled(false);
             rbTotal.setEnabled(false);
         }
+
         if (swBloqueo.isChecked()) {
             rbParcial.setVisibility(View.VISIBLE);
             rbTotal.setVisibility(View.VISIBLE);
         } else {
-            rbParcial.setVisibility(View.INVISIBLE);
-            rbTotal.setVisibility(View.INVISIBLE);
+            rbParcial.setVisibility(View.GONE);
+            rbTotal.setVisibility(View.GONE);
             rbParcial.setChecked(false);
             rbTotal.setChecked(false);
 
@@ -537,6 +559,17 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener 
         }
         super.onResume();
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return true;
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this

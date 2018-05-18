@@ -1,12 +1,26 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ToggleButton;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 
 /**
@@ -17,7 +31,28 @@ import android.view.ViewGroup;
  * Use the {@link conectividad#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class conectividad extends Fragment {
+public class conectividad extends Fragment implements AbsListView.OnItemClickListener{
+
+    View view;
+    ArrayList<String> vinculados;
+    ListView list, list2;
+    ToggleButton btnAnalizar;
+    BluetoothAdapter bluetoothAdapter;
+    int REQUEST_ENABLE = 0;
+
+    /*private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                DeviceItem newDevice = new DeviceItem(device.getName(), device.getAddress(), "false");
+                bluetoothAdapter.add(newDevice);
+            }
+        }
+    };*/
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,7 +99,48 @@ public class conectividad extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_conectividad, container, false);
+        view = inflater.inflate(R.layout.fragment_conectividad, container, false);
+        list = view.findViewById(R.id.lista);
+        list2 = view.findViewById(R.id.lista2);
+        btnAnalizar = view.findViewById(R.id.analizar);
+        vinculados = new ArrayList<String>();
+
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent, REQUEST_ENABLE);
+        }
+
+        bluetooth();
+        return view;
+    }
+
+    private void bluetooth() {
+        Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
+        for (BluetoothDevice pairedDevice : pairedDevicesList) {
+            vinculados.add(String.valueOf(pairedDevice.getName()));
+        }
+        String[] values =  new String[vinculados.size()];
+        for (int i = 0; i < vinculados.size(); i++) {
+            String aux = vinculados.get(i);
+            values[i] = aux;
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        list.setAdapter(adapter);
+
+        String[] values2 =  {"poio", "es", "bien", "pvto"};
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text2, values2);
+        list2.setAdapter(adapter2);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_ENABLE == requestCode) {
+            bluetooth();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +165,11 @@ public class conectividad extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
     }
 
     /**

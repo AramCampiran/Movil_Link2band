@@ -29,7 +29,7 @@
     <string name="prompt_repeatpass">Repite la contraseña</string>
     <string name="btn_listo">Listo</string>
 
-    <string name="title_activity_principal">L2B Móvil</string>
+    <string name="title_activity_principal">L2B</string>
     <!--Strings related to conectividad-->
     <string name="label_vinculados">Conectar con un dispositivo</string>
     <string name="label_available">Dispositivos disponibles</string>

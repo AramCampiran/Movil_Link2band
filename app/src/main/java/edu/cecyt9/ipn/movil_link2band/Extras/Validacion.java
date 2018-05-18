@@ -66,7 +66,7 @@ public class Validacion {
             } else if (datos[i].length() > LengthBounds[1]) {
                 Error.add("No sobrepases los " + LengthBounds[1] + " caracteres");
             } else if (i == 0 && !matcher0.matches()) {
-                Error.add("No no se reconoce {}[]()\"\'\\/;%|=^#`~<\no espacios en blanco");
+                Error.add("No se reconoce {}[]()\"\'\\/;%@|=^#`~<\no espacios en blanco");
             } else if (i == 1 && !matcher1.matches()) {
                 Error.add("Introduce un correo valido");
             } else if(i == 2 && !matcher23.matches()) {

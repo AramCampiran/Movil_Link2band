@@ -1,27 +1,26 @@
 package edu.cecyt9.ipn.movil_link2band;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
+
+import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
-import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
-import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -46,15 +45,13 @@ public class principal extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View view = navigationView.getHeaderView(0);
         Intent intent = getIntent();
         nom = intent.getStringExtra("nom");
         usuario = view.findViewById(R.id.nomUsr);
         usuario.setText("Hola " + nom);
         navigationView.setNavigationItemSelectedListener(this);
-        Fragment fragment = new SecurityMechanism();
-        getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
 
         id = intent.getStringExtra("id");
         String pass = intent.getStringExtra("pass");
@@ -65,6 +62,41 @@ public class principal extends AppCompatActivity
             System.out.println("Nueva id " + Comands.getID());
         }else
             System.out.println("ID existente " + Comands.getID());
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (!bluetoothAdapter.isEnabled()) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("¡no hay conexion!")
+                    .setMessage("al parecer no estas conectado a nunguna pulsera \n ¿Quieres conectarte?")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Fragment fragment = new conectividad();
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.contentPrincipal, fragment)
+                                    .addToBackStack(null)
+                                    .commit();
+                            getSupportActionBar().setTitle("Conectividad");
+                            navigationView.setCheckedItem(R.id.nav_blue);
+
+                        }
+                    })
+                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Fragment fragment = new SecurityMechanism();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
+                            getSupportActionBar().setTitle("Mecanismos de seguridad");
+                            navigationView.setCheckedItem(R.id.nav_mechanism);
+                        }
+                    })
+                    .show();
+        } else {
+            Fragment fragment = new SecurityMechanism();
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
+            getSupportActionBar().setTitle("Mecanismos de seguridad");
+            navigationView.setCheckedItem(R.id.nav_mechanism);
+        }
 
 
     }
@@ -104,18 +136,22 @@ public class principal extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        String title = "L2B";
         int id = item.getItemId();
         Fragment fragment = null;
         Boolean fragmentTransaction = false;
         if (id == R.id.nav_mechanism) {
             fragment = new SecurityMechanism();
             fragmentTransaction = true;
+            title = "Mecanismos de seguridad";
         } else if (id == R.id.nav_settings) {
             fragment = new GeneralConfig();
             fragmentTransaction = true;
+            title = "Configuración general";
         } else if (id == R.id.nav_blue){
             fragment = new conectividad();
             fragmentTransaction = true;
+            title = "Conectividad";
         } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Cerrar sesion")
@@ -134,6 +170,8 @@ public class principal extends AppCompatActivity
 
         if (fragmentTransaction) {
             getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
+            item.setChecked(true);
+            getSupportActionBar().setTitle(title);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
