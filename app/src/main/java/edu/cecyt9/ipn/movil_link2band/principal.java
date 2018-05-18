@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import java.util.Set;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
@@ -28,7 +29,7 @@ public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         GeneralConfig.OnFragmentInteractionListener,
         SecurityMechanism.OnFragmentInteractionListener,
-        conectividad.OnFragmentInteractionListener{
+        conectividad.OnFragmentInteractionListener {
 
     TextView usuario;
     String nom, id;
@@ -64,47 +65,14 @@ public class principal extends AppCompatActivity
         if (conect.selectIDs().equals("0")) {
             Long idReturn = conect.alataUSR(id, nom, pass, mail);
             System.out.println("Nueva id " + Comands.getID());
-        }else
+        } else
             System.out.println("ID existente " + Comands.getID());
 
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (!bluetoothAdapter.isEnabled()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("¡no hay conexion!")
-                    .setMessage("al parecer no estas conectado a nunguna pulsera \n ¿Quieres conectarte?")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Fragment fragment = new conectividad();
-                            getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.contentPrincipal, fragment)
-                                    .addToBackStack(null)
-                                    .commit();
-                            getSupportActionBar().setTitle("Conectividad");
-                            navigationView.setCheckedItem(R.id.nav_blue);
-
-                        }
-                    })
-                    .setNegativeButton("no", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            Fragment fragment = new SecurityMechanism();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
-                            getSupportActionBar().setTitle("Mecanismos de seguridad");
-                            navigationView.setCheckedItem(R.id.nav_mechanism);
-                        }
-                    })
-                    .show();
-        } else {
-            Fragment fragment = new SecurityMechanism();
-            getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
-            getSupportActionBar().setTitle("Mecanismos de seguridad");
-            navigationView.setCheckedItem(R.id.nav_mechanism);
-        }
-
-
+        Fragment fragment = new SecurityMechanism();
+        getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
+        getSupportActionBar().setTitle("Mecanismos de seguridad");
+        navigationView.setCheckedItem(R.id.nav_mechanism);
     }
-
 
 
     @Override
@@ -152,7 +120,7 @@ public class principal extends AppCompatActivity
             fragment = new GeneralConfig();
             fragmentTransaction = true;
             title = "Configuración general";
-        } else if (id == R.id.nav_blue){
+        } else if (id == R.id.nav_blue) {
             fragment = new conectividad();
             fragmentTransaction = true;
             title = "Conectividad";
