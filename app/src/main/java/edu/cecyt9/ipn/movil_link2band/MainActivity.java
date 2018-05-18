@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -84,23 +85,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(this, RegistroActivity.class);
             startActivity(intent);
         } else if (view.getId() == R.id.Log_recoveryTxtV) {
-
             final EditText mailInput = new EditText(this);
             mailInput.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-            mailInput.setHint(getString(R.string.prompt_email));
+            mailInput.setHint(getString(R.string.prompt_userandmail));
+            mailInput.requestFocus();
             final TextInputLayout Layout = new TextInputLayout(this);
             Layout.addView(mailInput);
             Layout.setPadding(20, 10, 20, 0);
 
             final AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Recuperación de contraseña")
-                    .setMessage("Introduce tu correo para restablecer tu contraseña")
+                    .setMessage("Completa el campo para restablecer tu contraseña")
                     .setView(Layout)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(final DialogInterface dialogInterface, int i) {
-                            if (mailInput.getText().toString().isEmpty()) {
-                                Toast.makeText(MainActivity.this, "Pero ps escribe algo >:v\n¿así cómo?", Toast.LENGTH_SHORT).show();
+                            Validacion val = new Validacion();
+                            if (!val.Mail_val(mailInput)) {
+                                val.ToastTheError(MainActivity.this);
                             } else {
                                 WS_Cliente ws = new WS_Cliente(getString(R.string.RecuperacionMethod), MainActivity.this) {
                                     @Override
