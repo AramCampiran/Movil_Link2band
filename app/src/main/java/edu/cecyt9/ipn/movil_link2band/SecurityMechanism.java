@@ -461,7 +461,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
                         }
                     }).show();
             dialog.dismiss();
-            actualizaLoc(latitud + ", " + longitud, "Bloqueado", SecMode);
+            actualizaLoc(latitud + ", " + longitud, "Desbloqueado", SecMode);
             DatabaseHelper DB = new DatabaseHelper(getActivity());
             DB.actualiza(Comands.getID(), latitud + ", " + longitud);
         }
