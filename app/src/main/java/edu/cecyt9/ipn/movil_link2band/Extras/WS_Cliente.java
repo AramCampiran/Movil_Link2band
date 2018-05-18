@@ -23,7 +23,7 @@ import edu.cecyt9.ipn.movil_link2band.MainActivity;
 public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
 
     private static final String NAMESPACE = "http://WebServer/";
-    private static String URL = "http://192.168.20.200:8080/Server_L2B/WebServer?WSDL";
+    private static String URL = "http://192.168.0.17:8080/Server_L2B/WebServer?WSDL";
     private static String METHODNAME;
     private static String SOAP_ACTION;
     private Context context;
@@ -98,7 +98,7 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
-                });
+                }).show();
     }
 
     public void onSuccessfulConnectionAttempt(Context context) {}

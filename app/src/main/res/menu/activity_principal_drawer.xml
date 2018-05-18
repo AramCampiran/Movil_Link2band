@@ -7,22 +7,22 @@
         <item
             android:id="@+id/nav_mechanism"
             android:icon="@drawable/ic_security"
-            android:title="Mecanismos de seguridad" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_settings"
-            android:title="configuracion general"/>
+            android:title="Mecanismos de Seguridad" />
         <item
             android:id="@+id/nav_blue"
             android:icon="@drawable/ic_bluetooth"
-            android:title="conectividad"/>
+            android:title="Conectividad"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Configuración General"/>
     </group>
-    <item android:title="Sesion">
+    <item android:title="Sesión">
         <menu>
             <item
                 android:id="@+id/logOut"
                 android:icon="@drawable/ic_logout"
-                android:title="cerrar sesion"
+                android:title="Cerrar Sesión"
                 />
         </menu>
     </item>
