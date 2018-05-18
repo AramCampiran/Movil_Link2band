@@ -130,11 +130,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 if (btnAnalizar.isChecked()) {
-                    try{
-                        cercanos.clear();
-                    }catch (Exception e){
-                        System.out.println("Exeption" + e);
-                    }
+                    cercanos.clear();
                     getActivity().registerReceiver(broadcastReceiver, filter);
                     bluetoothAdapter.startDiscovery();
                 } else {
