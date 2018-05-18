@@ -126,10 +126,10 @@ public class principal extends AppCompatActivity
             title = "Conectividad";
         } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Cerrar sesion")
+            alert.setTitle("Cerrar sesión")
                     .setMessage("¿Esta seguro de cerrar sesión? \nSe perderán tus preferencias de los mecanismos de seguridad")
-                    .setNegativeButton("No", null)
-                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             conect = new DatabaseHelper(getApplicationContext());
