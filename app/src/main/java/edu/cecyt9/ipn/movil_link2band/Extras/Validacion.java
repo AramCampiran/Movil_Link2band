@@ -1,6 +1,8 @@
 package edu.cecyt9.ipn.movil_link2band.Extras;
 
+import android.content.Context;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -37,6 +39,20 @@ public class Validacion {
         return isCorrect;
     }
 
+    public boolean Mail_val(EditText mail) {
+        Pattern patternMail = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[A-Za-z]{2,})$");
+        Matcher m = patternMail.matcher(mail.getText().toString());
+        WrongData = new ArrayList<EditText>();
+        Error = new ArrayList<String>();
+        if (!m.matches()) {
+            WrongData.add(mail);
+            Error.add("Introduce un correo válido");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public boolean Registro_Val(EditText... datos) {
         WrongData = new ArrayList<EditText>();
         Error = new ArrayList<String>();
@@ -66,15 +82,15 @@ public class Validacion {
             } else if (datos[i].length() > LengthBounds[1]) {
                 Error.add("No sobrepases los " + LengthBounds[1] + " caracteres");
             } else if (i == 0 && !matcher0.matches()) {
-                Error.add("No se reconoce {}[]()\"\'\\/;%@|=^#`~<\no espacios en blanco");
+                Error.add("No se reconoce @ { } [ ] ( ) \" \' \\ / ; % | = ^ # ` ~ <\no espacios en blanco");
             } else if (i == 1 && !matcher1.matches()) {
-                Error.add("Introduce un correo valido");
+                Error.add("Introduce un correo válido");
             } else if(i == 2 && !matcher23.matches()) {
-                Error.add("No no se reconoce {}[]()\"\'\\/;%|=^#`~<\no espacios en blanco");
+                Error.add("No se reconoce @ { } [ ] ( ) \" \' \\ / ; % | = ^ # ` ~ <\no espacios en blanco");
             } else if(i == 2 && !datos[i].getText().toString().equals(datos[3].getText().toString())){
                 Error.add("Las contraseñas no coinciden");
             }else if (i == 3 && !matcher23.matches()) {
-                Error.add("No no se reconoce {}[]()\"\'\\/;%|=^#`~<\no espacios en blanco");
+                Error.add("No se reconoce @ { } [ ] ( ) \" \' \\ / ; % | = ^ # ` ~ <\no espacios en blanco");
             } else {
                 tempCorrect = true;
                 WrongData.remove(datos[i]);
@@ -90,6 +106,10 @@ public class Validacion {
             WrongData.get(i).setError(Error.get(i));
         }
         WrongData.get(0).requestFocus();
+    }
+
+    public void ToastTheError(Context context) {
+        Toast.makeText(context, Error.get(0), Toast.LENGTH_SHORT).show();
     }
 
 }
