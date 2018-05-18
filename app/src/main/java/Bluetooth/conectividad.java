@@ -1,8 +1,9 @@
-package edu.cecyt9.ipn.movil_link2band;
+package Bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +18,16 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
+
+import edu.cecyt9.ipn.movil_link2band.R;
 
 
 /**
@@ -36,16 +41,17 @@ import java.util.Set;
 public class conectividad extends Fragment implements AbsListView.OnItemClickListener{
 
     View view;
-    ArrayList<String> vinculados, cercanos;
+    ArrayList<String> vinculados, cercanos, adress;
     ListView list, list2;
     ToggleButton btnAnalizar;
     BluetoothAdapter bluetoothAdapter;
+    BluetoothDevice device;
     int REQUEST_ENABLE = 0;
 
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
 
-
+    static UUID myUUID = null;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -95,9 +101,13 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         view = inflater.inflate(R.layout.fragment_conectividad, container, false);
         list = view.findViewById(R.id.lista);
         list2 = view.findViewById(R.id.lista2);
+        list2.setTextFilterEnabled(true);
         btnAnalizar = view.findViewById(R.id.analizar);
+
         vinculados = new ArrayList<String>();
         cercanos = new ArrayList<String>();
+        adress = new ArrayList<String>();
+
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
@@ -107,16 +117,12 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
 
         bluetooth("vinculados");
 
-        /*String[] values2 =  {"poio", "es", "bien", "pvto"};
-        final ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text2, values2);
-        //list2.setAdapter(adapter2);*/
-
         final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     cercanos.add(String.valueOf(device.getName()));
                     System.out.println(device.getName());
                     bluetooth("cercanos");
@@ -140,6 +146,22 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             }
         });
 
+        list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                conexion conn = new conexion();
+                conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            }
+        });
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                conexion conn = new conexion();
+                 conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            }
+        });
+
 
         return view;
     }
@@ -150,6 +172,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
             for (BluetoothDevice pairedDevice : pairedDevicesList) {
                 vinculados.add(String.valueOf(pairedDevice.getName()));
+                adress.add(String.valueOf(pairedDevice.getAddress()));
             }
             String[] values =  new String[vinculados.size()];
             for (int i = 0; i < vinculados.size(); i++) {
@@ -221,3 +244,5 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         void onFragmentInteraction(Uri uri);
     }
 }
+
+
