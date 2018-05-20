@@ -108,7 +108,8 @@
             android:layout_marginTop="2mm"
             android:background="@color/white"
             android:text="Escribe un mensaje de alerta"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/msjInScreen"
@@ -119,7 +120,8 @@
             android:text="Mensaje en pantalla"
             android:textAlignment="center"
             android:textColor="@android:color/darker_gray"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:visibility="gone"/>
 
         <GridLayout
             android:layout_width="wrap_content"

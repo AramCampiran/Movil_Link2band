@@ -1,5 +1,6 @@
 package Bluetooth;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -9,7 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+import edu.cecyt9.ipn.movil_link2band.Extras.HiloBluetooth;
 import edu.cecyt9.ipn.movil_link2band.R;
 
 
@@ -123,9 +127,21 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    cercanos.add(String.valueOf(device.getName()));
-                    System.out.println(device.getName());
+                    if (device.getName() != null) {
+                        cercanos.add(device.getName());
+                        System.out.println("Nombre " + device.getName());
+                        if(device.getName().equals("L2B BAND")){
+                            System.out.println("Entra");
+                            if (device.ACTION_ACL_CONNECTED.equals(action)){
+                                System.out.println("Conectado");
+                            }else if (device.ACTION_ACL_DISCONNECTED.equals(action)){
+                                System.out.println("Desconectado");
+                            } else
+                                System.out.println("Ninguno");
+                        }
+                    }
                     bluetooth("cercanos");
+
                 }
             }
         };
@@ -150,7 +166,19 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 conexion conn = new conexion();
-                conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+                if (conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"))) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Conexión bluetooth")
+                    .setMessage("Conexión establecida exitosamente")
+                    .setPositiveButton("ok", null)
+                    .show();
+                }else{
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Conexión bluetooth")
+                            .setMessage("no se pudo establecer la conexión")
+                            .setPositiveButton("ok", null)
+                            .show();
+                }
             }
         });
 
@@ -158,7 +186,19 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 conexion conn = new conexion();
-                 conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+                if (conn.connect(adress.get(i), UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"))) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Conexión bluetooth")
+                            .setMessage("Conexión establecida exitosamente")
+                            .setPositiveButton("ok", null)
+                            .show();
+                }else{
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Conexión bluetooth")
+                            .setMessage("no se pudo establecer la conexión")
+                            .setPositiveButton("ok", null)
+                            .show();
+                }
             }
         });
 
@@ -184,7 +224,9 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         } else {
             String[] values =  new String[cercanos.size()];
             for (int i = 0; i < cercanos.size(); i++) {
-                values[i] = cercanos.get(i);
+                if (cercanos.get(i) != null) {
+                    values[i] = cercanos.get(i);
+                }
             }
             adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
             list2.setAdapter(adapter2);

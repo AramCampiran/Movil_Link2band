@@ -40,13 +40,13 @@ public class Validacion {
     }
 
     public boolean Mail_val(EditText mail) {
-        Pattern patternMail = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)*(\\.[A-Za-z]{2,})$");
-        Matcher m = patternMail.matcher(mail.getText().toString());
+        Pattern patternRecovery = Pattern.compile("^[\\w-+:$*&>.,¿?¡!]+$");
+        Matcher m = patternRecovery.matcher(mail.getText().toString());
         WrongData = new ArrayList<EditText>();
         Error = new ArrayList<String>();
         if (!m.matches()) {
             WrongData.add(mail);
-            Error.add("Introduce un correo válido");
+            Error.add("No introduzcas caracteres especiales ni espacios en blanco");
             return false;
         } else {
             return true;

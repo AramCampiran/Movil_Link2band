@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jaredrummler.android.device.DeviceName;
+
+import java.lang.reflect.Type;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -154,6 +157,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             final View vi = inflater.inflate(R.layout.alert, null);
             final EditText txt = vi.findViewById(R.id.msj);
             txt.setHint("contraseña actual");
+            txt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
             alert.setTitle("Verifica contraseña")
                     .setView(vi)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
@@ -200,6 +204,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
         deleteDialog.setMessage("Por favor escribe tu contraseña para verificar tu identidad");
         final EditText txt = deleteDialogView.findViewById(R.id.msj);
         txt.setHint("Contraseña actual");
+        txt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         final EditText nuevo = deleteDialogView.findViewById(R.id.cambio);
         nuevo.setVisibility(View.VISIBLE);
         nuevo.setHint(hint);
@@ -229,9 +234,9 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     DatabaseHelper DB = new DatabaseHelper(getActivity());
-                                    DB.bajaUSR(Comands.getID());
-                                    startActivity(new Intent(getActivity(), MainActivity.class));
 
+                                    startActivity(new Intent(getActivity(), MainActivity.class));
+                                    DB.bajaUSR(Comands.getID());
                                 }
                             }).show();
                 } else {
@@ -251,8 +256,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     }
 
     private void elimina(String contra) {
-        DatabaseHelper DB = new DatabaseHelper(getActivity());
-        DB.bajaUSR(Comands.getID());
+        final DatabaseHelper DB = new DatabaseHelper(getActivity());
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente(getString(R.string.BajaMethod), getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
@@ -264,6 +268,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     startActivity(new Intent(getActivity(), MainActivity.class));
+                                    DB.bajaUSR(Comands.getID());
                                 }
                             }).show();
                 } else {

@@ -1,5 +1,6 @@
 package Bluetooth;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -13,6 +14,7 @@ import java.util.UUID;
  */
 public class conexion extends Thread{
     private BluetoothSocket bTSocket;
+    boolean conect = false;
 
     public boolean connect(String address, UUID mUUID) {
         try {
@@ -20,16 +22,18 @@ public class conexion extends Thread{
             BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
             bTSocket = dispositivo.createRfcommSocketToServiceRecord(mUUID);
             bTSocket.connect();
+            conect = true;
+            return true;
         } catch(IOException e) {
             System.out.println("Could not connect: " + e.getMessage());
             try {
                 bTSocket.close();
+                return false;
             } catch(IOException close) {
                 System.out.println("Could not close connection:" + e.toString());
                 return false;
             }
         }
-        return true;
     }
 
     public boolean cancel() {
@@ -40,5 +44,9 @@ public class conexion extends Thread{
             return false;
         }
         return true;
+    }
+
+    public boolean getConection(){
+        return conect;
     }
 }

@@ -79,7 +79,7 @@
         android:onClick="onClick"
         android:text="@string/prompt_entrar"
         android:textAllCaps="false"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

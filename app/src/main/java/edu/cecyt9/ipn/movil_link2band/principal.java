@@ -21,6 +21,7 @@ import android.widget.TextView;
 import Bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+import edu.cecyt9.ipn.movil_link2band.Extras.HiloBluetooth;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -69,6 +70,9 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
         getSupportActionBar().setTitle("Mecanismos de seguridad");
         navigationView.setCheckedItem(R.id.nav_mechanism);
+
+
+
     }
 
 

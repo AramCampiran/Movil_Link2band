@@ -10,7 +10,7 @@
     <string name="BajaMethod">Baja</string>
     <string name="CambioMethod">Cambio</string>
     <string name="ConsultaMethod">Consulta</string>
-    <string name="RecuperacionMethod">Recuperacion</string>
+    <string name="RecuperacionMethod">PeticionMail</string>
     <string name="ActualizarMethod">Actualizar</string>
     <string name="GetResultadoMethod">GetResultado</string>
     <string name="CerrarSesionMethod">CerrarSesion</string>

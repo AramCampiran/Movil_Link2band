@@ -45,6 +45,7 @@ import android.widget.TextView;
 import Bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+import edu.cecyt9.ipn.movil_link2band.Extras.HiloBluetooth;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 import static android.app.Activity.RESULT_OK;
@@ -544,12 +545,12 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
 
     @Override
     public void onResume() {
+        super.onResume();
         if (ringtone != null) {
             if (ringtone.isPlaying()) {
                 ringtone.stop();
             }
         }
-        super.onResume();
     }
 
     @Override
