@@ -18,10 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import Bluetooth.conectividad;
+import bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
-import edu.cecyt9.ipn.movil_link2band.Extras.HiloBluetooth;
 
 public class principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

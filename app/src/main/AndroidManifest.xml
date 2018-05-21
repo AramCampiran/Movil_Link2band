@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,6 +26,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="bluetooth.ServiceBluetooth"
+            android:enabled="true"
+            android:process=":BTprocess">
+        </service>
+
+        <receiver
+            android:name="bluetooth.SensorRestarterBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name=".ActivityRecognition.RestartSensor"/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".principal"
             android:label="@string/title_activity_principal"
