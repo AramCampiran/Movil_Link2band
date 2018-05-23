@@ -1,6 +1,5 @@
 package edu.cecyt9.ipn.movil_link2band;
 
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver;
+import edu.cecyt9.ipn.movil_link2band.bluetooth.ServiceBluetooth;
 import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -69,11 +70,7 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
         getSupportActionBar().setTitle("Mecanismos de seguridad");
         navigationView.setCheckedItem(R.id.nav_mechanism);
-
-
-
     }
-
 
     @Override
     public void onBackPressed() {
