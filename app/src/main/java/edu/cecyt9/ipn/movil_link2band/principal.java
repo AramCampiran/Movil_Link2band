@@ -17,8 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver;
-import edu.cecyt9.ipn.movil_link2band.bluetooth.ServiceBluetooth;
 import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;

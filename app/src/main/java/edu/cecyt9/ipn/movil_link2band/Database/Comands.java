@@ -19,6 +19,7 @@ public class Comands {
     private static String DURATION;
     private static String TONE;
     private static String MSJ;
+    private static String ADDRESS;
 
     public  Comands(){}
 
@@ -92,4 +93,12 @@ public class Comands {
     public static String getMSJ() {return MSJ;}
 
     public static void setMSJ(String MSJ) {Comands.MSJ = MSJ;}
+
+    public static String getADDRESS() {
+        return ADDRESS;
+    }
+
+    public static void setADDRESS(String ADDRESS) {
+        Comands.ADDRESS = ADDRESS;
+    }
 }

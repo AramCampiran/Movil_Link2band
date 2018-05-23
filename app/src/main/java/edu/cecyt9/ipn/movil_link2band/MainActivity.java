@@ -126,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             dialogInterface.cancel();
                         }
                     }).show();
-        } else if (view.getId() == R.id.btnToService) {
-            startActivity(new Intent(this, testActivity.class));
         }
     }
 }

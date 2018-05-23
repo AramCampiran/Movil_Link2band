@@ -1,6 +1,6 @@
 <resources>
     <!--GENERAL-->
-    <string name="app_name">Link 2 Band</string>
+    <string name="app_name">Link2Band</string>
     <string name="UserName">UserName</string>
     <string name="Pass">Pass</string>
     <string name="Model">Model</string>

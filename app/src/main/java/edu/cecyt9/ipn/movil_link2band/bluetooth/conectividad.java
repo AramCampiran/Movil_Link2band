@@ -1,6 +1,5 @@
 package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -29,7 +28,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import edu.cecyt9.ipn.movil_link2band.R;
-import edu.cecyt9.ipn.movil_link2band.principal;
 
 
 /**
@@ -48,7 +46,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
     ToggleButton btnAnalizar;
     BluetoothAdapter bluetoothAdapter;
     BluetoothDevice device;
-    int REQUEST_ENABLE = 0;
+    int REQUEST_ENABLE = 123;
 
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
@@ -154,26 +152,25 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    ConnectBluetooth(adress.get(i));
+                    IniciaServicio(adress.get(i));
                 }
             });
 
             list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    ConnectBluetooth(adress.get(i));
+                    IniciaServicio(adress.get(i));
                 }
             });
         }
         return view;
     }
 
-    public void ConnectBluetooth(String address) {
-        ServiceBluetooth service = new ServiceBluetooth();
-        Intent serviceIntent = new Intent(getActivity(), service.getClass());
+    public void IniciaServicio(String address) {
         if (!isMyServiceRunning(ServiceBluetooth.class)) {
-            SensorRestarterBroadcastReceiver.setAddress(address);
-            getActivity().startService(serviceIntent);
+            Intent ServiceIntent = new Intent(getActivity(), ServiceBluetooth.class);
+            ServiceIntent.putExtra("Address", address);
+            getActivity().startService(ServiceIntent);
         }
     }
 
@@ -223,16 +220,16 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             if (resultCode == Activity.RESULT_OK) {
                 Fragment current = new conectividad();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, current).commit();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                alert.setTitle("Aviso")
+                        .setMessage("Esta aplicación requiere que el Bluetooth esté encendido para funcionar correctamente")
+                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        }).show();
             }
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("Aviso")
-                    .setMessage("Esta aplicación requiere que el Bluetooth esté encendido para funcionar correctamente")
-                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    }).show();
         }
     }
 

@@ -7,19 +7,12 @@ import android.util.Log;
 
 public class SensorRestarterBroadcastReceiver extends BroadcastReceiver {
 
-    public static String Address;
-
-    public static String getAddress() {
-        return Address;
-    }
-
-    public static void setAddress(String address) {
-        Address = address;
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(SensorRestarterBroadcastReceiver.class.getSimpleName(), "Service Stops!");
-        context.startService(new Intent(context, ServiceBluetooth.class));
+        Intent service = new Intent(context, ServiceBluetooth.class);
+        String direccion = intent.getStringExtra("Address");
+        service.putExtra("Address", direccion);
+        context.startService(service);
     }
 }
