@@ -1,4 +1,4 @@
-package bluetooth;
+package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -150,13 +150,15 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                 }
             });
 
+            ServiceBluetooth service = new ServiceBluetooth();
+            final Intent serviceIntent = new Intent(getActivity(), service.getClass());
+
             list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent ServiceIntent = new Intent(getContext(), ServiceBluetooth.class);
                     if (!isMyServiceRunning(ServiceBluetooth.class)) {
                         SensorRestarterBroadcastReceiver.setAddress(adress.get(i));
-                        getActivity().startService(ServiceIntent);
+                        getActivity().startService(serviceIntent);
                     }
                 }
             });
@@ -164,10 +166,9 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Intent ServiceIntent = new Intent(getContext(), ServiceBluetooth.class);
                     if (!isMyServiceRunning(ServiceBluetooth.class)) {
                         SensorRestarterBroadcastReceiver.setAddress(adress.get(i));
-                        getActivity().startService(ServiceIntent);
+                        getActivity().startService(serviceIntent);
                     }
                 }
             });

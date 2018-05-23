@@ -28,13 +28,13 @@
         </activity>
 
         <service
-            android:name="bluetooth.ServiceBluetooth"
+            android:name="edu.cecyt9.ipn.movil_link2band.bluetooth.ServiceBluetooth"
             android:enabled="true"
             android:process=":BTprocess">
         </service>
 
         <receiver
-            android:name="bluetooth.SensorRestarterBroadcastReceiver"
+            android:name="edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">

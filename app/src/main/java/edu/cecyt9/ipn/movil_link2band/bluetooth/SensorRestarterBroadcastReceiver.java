@@ -1,4 +1,4 @@
-package bluetooth;
+package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

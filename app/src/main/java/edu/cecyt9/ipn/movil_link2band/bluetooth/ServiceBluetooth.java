@@ -1,4 +1,4 @@
-package bluetooth;
+package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,8 +25,6 @@ public class ServiceBluetooth extends Service {
     public int counter = 0;
     private BluetoothSocket bTSocket;
     private boolean restart = true;
-    final String address = SensorRestarterBroadcastReceiver.getAddress();
-
 
     public ServiceBluetooth() {
         Log.i("HERE", "here I am!");
@@ -35,6 +34,7 @@ public class ServiceBluetooth extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         try {
+            String address = SensorRestarterBroadcastReceiver.getAddress();
             BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
             bTSocket = dispositivo.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
@@ -42,11 +42,11 @@ public class ServiceBluetooth extends Service {
             startTimer();
             Toast.makeText(getApplicationContext(), "Conexión exitosa", Toast.LENGTH_SHORT).show();
 
-//            IntentFilter filter = new IntentFilter();
-//            filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-//            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-//            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-//            this.registerReceiver(mReceiver, filter);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+            filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+            this.registerReceiver(mReceiver, filter);
         } catch (IOException e) {
             System.out.println("No c pudo conectar");
             stopService(intent);
@@ -82,10 +82,10 @@ public class ServiceBluetooth extends Service {
         super.onDestroy();
         Log.i("EXIT", "ondestroy!");
         stoptimertask();
-        if (restart) {
-            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
-            sendBroadcast(broadcastIntent);
-        }
+//        if (restart) {
+//            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
+//            sendBroadcast(broadcastIntent);
+//        }
     }
 
     private Timer timer;
