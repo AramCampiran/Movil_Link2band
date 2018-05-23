@@ -19,17 +19,23 @@ import edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver
 import edu.cecyt9.ipn.movil_link2band.bluetooth.ServiceBluetooth;
 import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 
-public class testActivity extends AppCompatActivity implements View.OnClickListener{
+public class testActivity extends AppCompatActivity {
 
     LinearLayout LL;
     BluetoothAdapter bluetoothAdapter;
+    Intent mServiceIntent;
+    private ServiceBluetooth mSensorService;
+    Context ctx;
+    public Context getCtx() {
+        return ctx;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
         LL = findViewById(R.id.LL);
-
+        ctx = this;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -42,20 +48,15 @@ public class testActivity extends AppCompatActivity implements View.OnClickListe
                 btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ConnectBluetooth(pairedDevice.getAddress());
+                        mSensorService = new ServiceBluetooth(getCtx());
+                        mServiceIntent = new Intent(getCtx(), mSensorService.getClass());
+                        if (!isMyServiceRunning(mSensorService.getClass())) {
+                            startService(mServiceIntent);
+                        }
                     }
                 });
                 LL.addView(btn);
             }
-        }
-    }
-
-    public void ConnectBluetooth(String address) {
-        ServiceBluetooth service = new ServiceBluetooth();
-        Intent serviceIntent = new Intent(this, service.getClass());
-        if (!isMyServiceRunning(ServiceBluetooth.class)) {
-            SensorRestarterBroadcastReceiver.setAddress(address);
-            startService(serviceIntent);
         }
     }
 
@@ -81,6 +82,9 @@ public class testActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view) {
+    protected void onDestroy() {
+        stopService(mServiceIntent);
+        System.out.println("OnDestroy!");
+        super.onDestroy();
     }
 }

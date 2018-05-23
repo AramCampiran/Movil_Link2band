@@ -20,7 +20,6 @@ public class SensorRestarterBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(SensorRestarterBroadcastReceiver.class.getSimpleName(), "Service Stops!");
-        Intent intento = new Intent(context, ServiceBluetooth.class);
-        context.startService(intento);
+        context.startService(new Intent(context, ServiceBluetooth.class));
     }
 }
