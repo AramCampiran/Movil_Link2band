@@ -39,7 +39,7 @@ import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
  * Use the {@link GeneralConfig#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GeneralConfig extends Fragment implements View.OnClickListener{
+public class GeneralConfig extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -152,12 +152,12 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         final String[] contra = new String[1];
         if (v.getId() == btnDelete.getId()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
             final View vi = inflater.inflate(R.layout.alert, null);
             final EditText txt = vi.findViewById(R.id.msj);
             txt.setHint("contraseña actual");
-            txt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            txt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Verifica contraseña")
                     .setView(vi)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
@@ -196,29 +196,40 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 
     private String alert(String hint, final String campo) {
         final String[] cambio = {""};
-        LayoutInflater factory = LayoutInflater.from(getActivity());
-        final View deleteDialogView = factory.inflate(R.layout.alert, null);
-        final AlertDialog.Builder deleteDialog = new AlertDialog.Builder(getActivity());
-        deleteDialog.setView(deleteDialogView);
-        deleteDialog.setTitle("Guardar cambios");
-        deleteDialog.setMessage("Por favor escribe tu contraseña para verificar tu identidad");
-        final EditText txt = deleteDialogView.findViewById(R.id.msj);
+        LayoutInflater factory = getActivity().getLayoutInflater();
+
+        View nView = factory.inflate(R.layout.alert, null);
+
+        final EditText txt = nView.findViewById(R.id.msj);
+        final EditText nuevo = nView.findViewById(R.id.cambio);
+
         txt.setHint("Contraseña actual");
-        txt.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        final EditText nuevo = deleteDialogView.findViewById(R.id.cambio);
+        txt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        txt.setSingleLine(true);
         nuevo.setVisibility(View.VISIBLE);
         nuevo.setHint(hint);
-        deleteDialog.setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (!nuevo.getText().toString().equals("") && !txt.getText().toString().equals("")) {
-                    saveChanges(nuevo.getText().toString(), txt.getText().toString(), campo);
-                    cambio[0] = nuevo.getText().toString();
-                }
-            }
-        });
-        deleteDialog.setNegativeButton("cancelar", null);
-        deleteDialog.show();
+        nuevo.setSingleLine(true);
+
+        if (hint.equals("Nueva contraseña"))
+            nuevo.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        else
+            nuevo.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setView(nView)
+                .setTitle("Guardar cambios")
+                .setMessage("Por favor escribe tu contraseña para verificar tu identidad")
+                .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (!nuevo.getText().toString().equals("") && !txt.getText().toString().equals("")) {
+                            saveChanges(nuevo.getText().toString(), txt.getText().toString(), campo);
+                            cambio[0] = nuevo.getText().toString();
+                        }
+                    }
+                })
+                .setNegativeButton("cancelar", null)
+                .show();
         return cambio[0];
     }
 
@@ -304,7 +315,7 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
             }
 
             @Override
-            public void onFailedConnectionAttempt(Context context){
+            public void onFailedConnectionAttempt(Context context) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
                 alert.setTitle("Ha ocurrido un error")
                         .setMessage("pito")
@@ -322,7 +333,6 @@ public class GeneralConfig extends Fragment implements View.OnClickListener{
 //        System.out.println("Mail " + Comands.getMAIL() +"\n"+"Nom " + Comands.getNOM()+ "\n" + "Pass "+ Comands.getPASS());
         return correct[0];
     }
-
 
 
     /**
