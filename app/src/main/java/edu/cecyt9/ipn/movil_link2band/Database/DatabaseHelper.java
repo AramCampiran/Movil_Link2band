@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.util.Log;
 
 /**
  * Created by Usuario on 29/04/2018.
@@ -22,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase DB) {
+        Log.d("SQL", "Ya cabron");
         DB.execSQL(Utilidades.CREATE_TABLE);
     }
 
@@ -57,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Arreglo para campos que quieres que regresen
         String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS, Utilidades.CAMPO_MAIL,
                             Utilidades.CAMPO_SMODE, Utilidades.CAMPO_BLOCK, Utilidades.CAMPO_PARBLOCK, Utilidades.CAMPO_TOTBLOCK, Utilidades.CAMPO_DURATION,
-                            Utilidades.CAMPO_TONE, Utilidades.CAMPO_MSJ};
+                            Utilidades.CAMPO_TONE, Utilidades.CAMPO_URISTRING, Utilidades.CAMPO_MSJ};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
@@ -74,6 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Comands.setTOTBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TOTBLOCK)));
                 Comands.setDURATION(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_DURATION)));
                 Comands.setTONE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TONE)));
+                Comands.setURISTRING(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_URISTRING)));
                 Comands.setMSJ(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MSJ)));
             }
             cursor.close();
@@ -97,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertaMecanismos(String id, String sMode, String block, String parBlock,
-                                  String totBlock,  String duration, String tone, String msj){
+                                  String totBlock,  String duration, String tone, String UriString, String msj){
         SQLiteDatabase DB = getWritableDatabase();
         String [] parameters = {id};
         ContentValues values = new ContentValues();
@@ -108,6 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Utilidades.CAMPO_TOTBLOCK, totBlock);
         values.put(Utilidades.CAMPO_DURATION, duration);
         values.put(Utilidades.CAMPO_TONE, tone);
+        values.put(Utilidades.CAMPO_URISTRING, UriString);
         values.put(Utilidades.CAMPO_MSJ, msj);
 
         DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
@@ -119,6 +124,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Comands.setTOTBLOCK(totBlock);
         Comands.setDURATION(duration);
         Comands.setTONE(tone);
+        Comands.setURISTRING(UriString);
         Comands.setMSJ(msj);
     }
 

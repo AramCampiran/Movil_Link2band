@@ -1,7 +1,10 @@
 package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -9,9 +12,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -23,14 +28,17 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 import edu.cecyt9.ipn.movil_link2band.R;
+import edu.cecyt9.ipn.movil_link2band.principal;
 
 /**
  * Created by fabio on 30/01/2016.
  */
 public class ServiceBluetooth extends Service {
-    public int counter = 0;
-    private String Address;
+    public int counter = 0, notiID = 1303;
+    private String Address, UriString, Msj;
     private boolean Restart;
+    private Ringtone ringtone;
+    private Notification notification;
 
     public ServiceBluetooth() {
         super();
@@ -42,6 +50,8 @@ public class ServiceBluetooth extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Address = intent.getStringExtra("Address");
+        UriString = intent.getStringExtra("UriString");
+        Msj = intent.getStringExtra("Msj");
         BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(Address);
         try {
@@ -52,13 +62,19 @@ public class ServiceBluetooth extends Service {
 //                filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
 //                filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
                 filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-                this.registerReceiver(mReceiver, filter);
+                this.registerReceiver(BTReceiver, filter);
 
-                Notification notification = new NotificationCompat.Builder(getApplicationContext())
+                notification = new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("Link2Band")
-                        .setContentText("Pulsera conectada").build();
-                startForeground(1303, notification);
+                        .setContentText("Pulsera conectada")
+                        .setContentIntent(
+                                PendingIntent.getActivity(getApplicationContext(), 10,
+                                        new Intent(getApplicationContext(), principal.class)
+                                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                                        0)
+                        ).build();
+                startForeground(notiID, notification);
                 startTimer();
                 Toast.makeText(getApplicationContext(), "Conexión exitosa", Toast.LENGTH_SHORT).show();
             } else {
@@ -76,7 +92,7 @@ public class ServiceBluetooth extends Service {
         return START_STICKY;
     }
 
-    final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    final BroadcastReceiver BTReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -84,13 +100,47 @@ public class ServiceBluetooth extends Service {
 
             if (device.getName().equals("L2B BAND")) {
                 if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    Bloqueo();
                     Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
-                    Restart = false;
-                    stopSelf();
+                    stoptimertask();
                 }
             }
         }
     };
+
+    @SuppressLint("NewApi")
+    private void Bloqueo() {
+        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getApplicationContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
+        AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_RING, am.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
+        Uri uri = Uri.parse(UriString);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+        try {
+            ringtone.play();
+            devicePolicyManager.lockNow();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_USER_PRESENT);
+            this.registerReceiver(UnlockReceiver, filter);
+            stopForeground(true);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Uy que pena :v no jaló", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    final BroadcastReceiver UnlockReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_USER_PRESENT.equals(action)) {
+                if (ringtone != null) {
+                    if (ringtone.isPlaying()) {
+                        ringtone.stop();
+                    }
+                }
+            }
+        }
+    };
+
 
     @Override
     public void onDestroy() {

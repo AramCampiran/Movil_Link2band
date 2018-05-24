@@ -18,9 +18,8 @@ public class Utilidades {
     public static final String CAMPO_TOTBLOCK = "TOTBLOCK";
     public static final String CAMPO_DURATION = "DURATION";
     public static final String CAMPO_TONE = "TONE";
+    public static final String CAMPO_URISTRING = "URISTRING";
     public static final String CAMPO_MSJ = "MSJ";
-
-    public static final String CAMPO_ADDRESS = "ADDRESS";
 
     public static final String TABLE_NAME = "usuarios";
     public static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "(" + CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -34,8 +33,8 @@ public class Utilidades {
             + CAMPO_TOTBLOCK + " TEXT, "
             + CAMPO_DURATION + " TEXT, "
             + CAMPO_TONE + " TEXT, "
-            + CAMPO_MSJ + " TEXT, "
-            + CAMPO_ADDRESS + " TEXT)";
+            + CAMPO_URISTRING + " TEXT, "
+            + CAMPO_MSJ + " TEXT)";
 
 
 }

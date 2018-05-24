@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.R;
 
 
@@ -170,6 +171,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         if (!isMyServiceRunning(ServiceBluetooth.class)) {
             Intent ServiceIntent = new Intent(getActivity(), ServiceBluetooth.class);
             ServiceIntent.putExtra("Address", address);
+            ServiceIntent.putExtra("UriString", Comands.getURISTRING());
+            ServiceIntent.putExtra("Msj", Comands.getMSJ());
             getActivity().startService(ServiceIntent);
         }
     }

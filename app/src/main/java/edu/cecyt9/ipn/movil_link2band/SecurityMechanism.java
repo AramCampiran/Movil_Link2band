@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
@@ -58,7 +59,7 @@ import static android.app.Activity.RESULT_OK;
  * Use the {@link SecurityMechanism#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SecurityMechanism extends Fragment implements View.OnClickListener, conectividad.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener{
+public class SecurityMechanism extends Fragment implements View.OnClickListener, conectividad.OnFragmentInteractionListener, NavigationView.OnNavigationItemSelectedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,7 +76,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     final int RQS_RINGTONEPICKER = 1;
     Uri uriRingTone;
     Ringtone ringtone;
-    static String tone;
+    static String tone, UriString = "";
 
     DevicePolicyManager devicePolicyManager;
     ComponentName component;
@@ -143,7 +144,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
 
-        uriRingTone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        uriRingTone = Uri.parse(Comands.getURISTRING());
+        ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
         msj = view.findViewById(R.id.msjInScreen);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -184,6 +186,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             btnTone.setText(Comands.getTONE());
             msj.setText(Comands.getMSJ());
             tone = Comands.getTONE();
+            UriString = Comands.getURISTRING();
         }
 
         visibilidad();
@@ -246,7 +249,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         DatabaseHelper DB = new DatabaseHelper(getContext());
         DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
                 String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
-                msj.getText().toString());
+                UriString, msj.getText().toString());
     }
 
     @Override
@@ -255,7 +258,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         DatabaseHelper DB = new DatabaseHelper(getContext());
         DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
                 String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
-                msj.getText().toString());
+                UriString, msj.getText().toString());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -263,7 +266,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         if (v.getId() == btnDuracion.getId()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-            alert.setTitle("btnDuracion de alarma")
+            alert.setTitle("Duración de alarma")
                     .setSingleChoiceItems(DuraOptions, Selected, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -332,6 +335,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
                 //intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "dame permiso prro");
                 startActivityForResult(intent, REQUEST_ENABLE);
             } else {
+                AudioManager am = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+                am.setStreamVolume(AudioManager.STREAM_RING, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
                 try {
                     ringtone.play();
                     devicePolicyManager.lockNow();
@@ -435,10 +440,10 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("SetDatosMovil", getActivity()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                    alert.setMessage("Datos enviados")
-                            .setPositiveButton("Ok", null).show();
-                    System.out.println("Datos enviados");
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                alert.setMessage("Datos enviados")
+                        .setPositiveButton("Ok", null).show();
+                System.out.println("Datos enviados");
             }
         };
         ws.execute(new String[]{"ID", "Loc", "Status", "secureMode"},
@@ -534,6 +539,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RQS_RINGTONEPICKER && resultCode == RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            UriString = uri.toString();
+            System.out.println(UriString);
             ringtone = RingtoneManager.getRingtone(getContext(), uri);
             btnTone.setText(ringtone.getTitle(getContext()));
             tone = ringtone.getTitle(getContext());

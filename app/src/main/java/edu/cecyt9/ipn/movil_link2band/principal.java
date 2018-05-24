@@ -110,18 +110,18 @@ public class principal extends AppCompatActivity
         if (id == R.id.nav_mechanism) {
             fragment = new SecurityMechanism();
             fragmentTransaction = true;
-            title = "Mecanismos de seguridad";
+            title = "Mecanismos de Seguridad";
         } else if (id == R.id.nav_settings) {
             fragment = new GeneralConfig();
             fragmentTransaction = true;
-            title = "Configuración general";
+            title = "Configuración General";
         } else if (id == R.id.nav_blue) {
             fragment = new conectividad();
             fragmentTransaction = true;
             title = "Conectividad";
         } else if (id == R.id.logOut) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
-            alert.setTitle("Cerrar sesión")
+            alert.setTitle("Cerrar Sesión")
                     .setMessage("¿Esta seguro de cerrar sesión? \nSe perderán tus preferencias de los mecanismos de seguridad")
                     .setNegativeButton("Cancelar", null)
                     .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {

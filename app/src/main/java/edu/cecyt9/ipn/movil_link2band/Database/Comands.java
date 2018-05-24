@@ -18,6 +18,7 @@ public class Comands {
     private static String TOTBLOCK;
     private static String DURATION;
     private static String TONE;
+    private static String URISTRING;
     private static String MSJ;
     private static String ADDRESS;
 
@@ -89,6 +90,10 @@ public class Comands {
     public static String getTONE() {return TONE;}
 
     public static void setTONE(String TONE) {Comands.TONE = TONE;}
+
+    public static String getURISTRING() {return URISTRING;}
+
+    public static void setURISTRING(String URISTRING) {Comands.URISTRING = URISTRING;}
 
     public static String getMSJ() {return MSJ;}
 
