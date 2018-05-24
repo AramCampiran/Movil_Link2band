@@ -42,11 +42,11 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
+import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -301,13 +301,16 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
             startActivityForResult(intent, RQS_RINGTONEPICKER);
         } else if (v.getId() == btnWriteMsj.getId()) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             final LayoutInflater inflater = getActivity().getLayoutInflater();
-            final EditText txt = view.findViewById(R.id.msj);
-            final View view = inflater.inflate(R.layout.alert, null);
+            final View nView = inflater.inflate(R.layout.alert, null);
+            final EditText txt = nView.findViewById(R.id.msj);
+            txt.setHint("Escribe un mensaje");
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Mensaje en pantalla")
-                    .setView(view)
+                    .setView(nView)
                     .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (!txt.getText().toString().equals("")) {
@@ -534,8 +537,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         }
     };
 
-
     @Override
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RQS_RINGTONEPICKER && resultCode == RESULT_OK) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
