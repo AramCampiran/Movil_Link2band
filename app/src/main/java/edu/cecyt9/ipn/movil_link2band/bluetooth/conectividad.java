@@ -220,6 +220,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
     public void IniciaServicio(String address) {
         if (!isMyServiceRunning(ServiceBluetooth.class)) {
             Intent ServiceIntent = new Intent(getActivity(), ServiceBluetooth.class);
+            ServiceIntent.putExtra("ID", Comands.getID());
+            ServiceIntent.putExtra("SecMode", Comands.getSMODE());
             ServiceIntent.putExtra("Address", address);
             ServiceIntent.putExtra("UriString", Comands.getURISTRING());
             ServiceIntent.putExtra("Msj", Comands.getMSJ());
