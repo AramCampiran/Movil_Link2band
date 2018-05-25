@@ -2,6 +2,7 @@ package edu.cecyt9.ipn.movil_link2band;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.admin.DevicePolicyManager;
@@ -42,6 +43,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
@@ -144,13 +147,34 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
 
-        uriRingTone = Uri.parse(Comands.getURISTRING());
-        ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
+        try {
+            UriString = Comands.getURISTRING();
+            uriRingTone = Uri.parse(UriString);
+            ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
+        } catch (NullPointerException e) {
+        }
         msj = view.findViewById(R.id.msjInScreen);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         btnLocalizar = view.findViewById(R.id.localizar);
         btnLocalizar.setOnClickListener(this);
+
+        devicePolicyManager = (DevicePolicyManager) getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
+        component = new ComponentName(getContext(), Darclass.class);
+        boolean active = devicePolicyManager.isAdminActive(component);
+
+        UserManager userManager = (UserManager) getContext().getSystemService(Context.USER_SERVICE);
+        UserHandle io = android.os.Process.myUserHandle();
+        long serialNumber = userManager.getSerialNumberForUser(io);
+        System.out.println(serialNumber);
+
+        if (!active) {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, component);
+            //intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "dame permiso prro");
+            startActivityForResult(intent, REQUEST_ENABLE);
+        }
+
 
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -538,17 +562,31 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     };
 
     @Override
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RQS_RINGTONEPICKER && resultCode == RESULT_OK) {
-            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            UriString = uri.toString();
-            System.out.println(UriString);
-            ringtone = RingtoneManager.getRingtone(getContext(), uri);
-            btnTone.setText(ringtone.getTitle(getContext()));
-            tone = ringtone.getTitle(getContext());
-        } else if (REQUEST_ENABLE == requestCode) {
-            super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RQS_RINGTONEPICKER) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                UriString = uri.toString();
+                System.out.println(UriString);
+                ringtone = RingtoneManager.getRingtone(getContext(), uri);
+                btnTone.setText(ringtone.getTitle(getContext()));
+                tone = ringtone.getTitle(getContext());
+            } else if (REQUEST_ENABLE == requestCode) {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        } else if (requestCode == REQUEST_ENABLE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(getContext(), "Link2Band ahora es administrador de tu dispositivo", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(getContext());
+                alert.setTitle("Aviso")
+                        .setMessage("Es necesario que aceptes a Link2Band como administrador de tu dispositivo o de lo contrario no podras utilizar el bloqueo")
+                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        }).show();
+            }
         }
     }
 

@@ -1,9 +1,15 @@
 package edu.cecyt9.ipn.movil_link2band;
 
+import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
@@ -30,6 +37,7 @@ public class principal extends AppCompatActivity
     TextView usuario;
     String nom, id;
     DatabaseHelper conect;
+    int REQUEST_ENABLE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

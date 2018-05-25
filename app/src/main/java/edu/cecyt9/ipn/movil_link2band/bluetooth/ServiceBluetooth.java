@@ -51,7 +51,7 @@ public class ServiceBluetooth extends Service {
         super.onStartCommand(intent, flags, startId);
         Address = intent.getStringExtra("Address");
         UriString = intent.getStringExtra("UriString");
-        Msj = intent.getStringExtra("Msj");
+//        Msj = intent.getStringExtra("Msj");
         BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(Address);
         try {
@@ -96,10 +96,9 @@ public class ServiceBluetooth extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (device.getName().equals("L2B BAND")) {
-                if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (device.getName().equals("L2B BAND")) {
                     Bloqueo();
                     Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
                     stoptimertask();
@@ -122,8 +121,19 @@ public class ServiceBluetooth extends Service {
             filter.addAction(Intent.ACTION_USER_PRESENT);
             this.registerReceiver(UnlockReceiver, filter);
             stopForeground(true);
+            notification = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("Link2Band")
+                    .setContentText("Pulsera desconectada\nLos mecanismos de seguridad se ejecutaron correctamente")
+                    .setContentIntent(
+                            PendingIntent.getActivity(getApplicationContext(), 10,
+                                    new Intent(getApplicationContext(), principal.class)
+                                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                                    0)
+                    ).build();
+            startForeground(notiID, notification);
         } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Uy que pena :v no jaló", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Hubo un problema para ejecutar los mecanismos", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -137,6 +147,8 @@ public class ServiceBluetooth extends Service {
                         ringtone.stop();
                     }
                 }
+                Restart = false;
+                stopSelf();
             }
         }
     };

@@ -23,6 +23,8 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 
+import org.kobjects.util.Util;
+
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -42,12 +44,13 @@ import edu.cecyt9.ipn.movil_link2band.R;
 public class conectividad extends Fragment implements AbsListView.OnItemClickListener {
 
     View view;
-    ArrayList<String> vinculados, cercanos, adress;
+    ArrayList<BluetoothDevice> vinculados, cercanos;
+    ArrayList<String> adress;
     ListView list, list2;
     ToggleButton btnAnalizar;
     BluetoothAdapter bluetoothAdapter;
     BluetoothDevice device;
-    int REQUEST_ENABLE = 123;
+    int REQUEST_ENABLE = 123, REQUEST_PAIR = 124;
 
     ArrayAdapter<String> adapter;
     ArrayAdapter<String> adapter2;
@@ -105,8 +108,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         list2.setTextFilterEnabled(true);
         btnAnalizar = view.findViewById(R.id.analizar);
 
-        vinculados = new ArrayList<String>();
-        cercanos = new ArrayList<String>();
+        vinculados = new ArrayList<BluetoothDevice>();
+        cercanos = new ArrayList<BluetoothDevice>();
         adress = new ArrayList<String>();
 
 
@@ -124,12 +127,11 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                     String action = intent.getAction();
                     if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                         device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        if (device.getName() != null) {
-                            cercanos.add(device.getName());
+                        if (device != null) {
+                            cercanos.add(device);
                             System.out.println("Nombre " + device.getName());
                         }
                         bluetooth("cercanos");
-
                     }
                 }
             };
@@ -160,12 +162,60 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    IniciaServicio(adress.get(i));
+                    if (isPaired(cercanos.get(i))) {
+                        IniciaServicio(cercanos.get(i).getAddress());
+                    } else {
+                        byte[] pin = (""+0000).getBytes();
+                        cercanos.get(i).setPin(pin);
+                        try {
+                            cercanos.get(i).setPairingConfirmation(true);
+                        } catch (SecurityException e) {
+                            System.out.println("Error xd: " + e.getMessage() + " | " + e.getCause() );
+                        }
+                        System.out.println("Ganamos :D");
+
+//                        IntentFilter intent = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
+//                        getContext().registerReceiver(mPairing, intent);
+                    }
                 }
             });
         }
         return view;
     }
+
+    private final BroadcastReceiver mPairing = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            System.out.println("Entro al broudcast");
+//            if (BluetoothDevice.ACTION_PAIRING_REQUEST.equals(intent.getAction())) {
+//                final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//                int type = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_VARIANT, BluetoothDevice.ERROR);
+//                if (type == BluetoothDevice.PAIRING_VARIANT_PIN) {
+//                    String x = String.valueOf(0000);
+//                    device.setPin(x.getBytes());
+//                    Fragment current = new conectividad();
+//                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, current).commit();
+//                } else {
+//                    System.out.println("Unexpected pairing type: " + type);
+//                }
+//            }
+        }
+    };
+
+    public int pin() {
+        return getArguments().getInt("pin", -1);
+    }
+
+    public boolean isPaired(BluetoothDevice cercano) {
+        for (int i = 0; i < vinculados.size(); i++) {
+            if (vinculados.get(i).equals(cercano)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //SERVICIO
 
     public void IniciaServicio(String address) {
         if (!isMyServiceRunning(ServiceBluetooth.class)) {
@@ -189,17 +239,19 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         return false;
     }
 
+    //FIN SERVICIO
+
     private void bluetooth(String tipo) {
 
         if (tipo.equals("vinculados")) {
             Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
             for (BluetoothDevice pairedDevice : pairedDevicesList) {
-                vinculados.add(String.valueOf(pairedDevice.getName()));
+                vinculados.add(pairedDevice);
                 adress.add(String.valueOf(pairedDevice.getAddress()));
             }
             String[] values = new String[vinculados.size()];
             for (int i = 0; i < vinculados.size(); i++) {
-                values[i] = vinculados.get(i);
+                values[i] = String.valueOf(vinculados.get(i).getName());
             }
 
             adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -208,7 +260,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             String[] values = new String[cercanos.size()];
             for (int i = 0; i < cercanos.size(); i++) {
                 if (cercanos.get(i) != null) {
-                    values[i] = cercanos.get(i);
+                    values[i] = cercanos.get(i).getName();
                 }
             }
             adapter2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, values);
@@ -216,6 +268,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
         }
 
     }
+
+    //RESULTADO DE LA SOLICITUD DE BLUETOOTH
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -235,6 +289,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             }
         }
     }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
