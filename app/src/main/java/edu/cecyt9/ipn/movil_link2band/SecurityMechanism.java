@@ -178,7 +178,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
 
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("El sistema GPS esta desactivado \n ¿Desea activarlo?")
+            builder.setMessage("El sistema GPS está desactivado \n Si desea poder rastrear su dispositivo debe activarlo")
                     .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
