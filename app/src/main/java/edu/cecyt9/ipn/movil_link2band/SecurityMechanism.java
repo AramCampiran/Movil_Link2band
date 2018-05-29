@@ -71,7 +71,8 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     View view;
     Button btnDuracion, btnTone, btnWriteMsj, btnBloquear, btnLocalizar;
     TextView msj;
-    String[] DuraOptions = {"15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
+    int[] DuraIntValues = {5, 15, 30, 60, 300, 600};
+    String[] DuraOptions = {"5 segundos", "15 segundos", "30 segundos", "1 minuto", "5 minutos", "10 minutos"};
     RadioButton rbTotal, rbParcial;
     Switch swBloqueo, swSecMod;
 
@@ -147,12 +148,6 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         btnBloquear = view.findViewById(R.id.bloquear);
         btnBloquear.setOnClickListener(this);
 
-        try {
-            UriString = Comands.getURISTRING();
-            uriRingTone = Uri.parse(UriString);
-            ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
-        } catch (NullPointerException e) {
-        }
         msj = view.findViewById(R.id.msjInScreen);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -213,6 +208,14 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             UriString = Comands.getURISTRING();
         }
 
+        try {
+            UriString = Comands.getURISTRING();
+            uriRingTone = Uri.parse(UriString);
+            ringtone = RingtoneManager.getRingtone(getContext(), uriRingTone);
+        } catch (NullPointerException e) {
+            btnTone.setText("Sin tono");
+        }
+
         visibilidad();
 
         final NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
@@ -221,9 +224,9 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-            alert.setTitle("¡no hay conexion!")
-                    .setMessage("al parecer no estas conectado a nunguna pulsera \n ¿Quieres conectarte?")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            alert.setTitle("No estás conectado a tu pulsera")
+                    .setMessage("¿Deseas conectarte?")
+                    .setPositiveButton("Claro", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             Fragment fragment = new conectividad();
@@ -236,7 +239,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
 
                         }
                     })
-                    .setNegativeButton("no", null)
+                    .setNegativeButton("Ahora no", null)
                     .show();
         }
         return view;
@@ -272,7 +275,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         super.onDestroy();
         DatabaseHelper DB = new DatabaseHelper(getContext());
         DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
-                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
+                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], DuraIntValues[Selected], tone,
                 UriString, msj.getText().toString());
     }
 
@@ -281,7 +284,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
         super.onPause();
         DatabaseHelper DB = new DatabaseHelper(getContext());
         DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
-                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], tone,
+                String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], DuraIntValues[Selected], tone,
                 UriString, msj.getText().toString());
     }
 
@@ -302,6 +305,10 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             btnDuracion.setText(DuraOptions[Selected]);
+                            DatabaseHelper DB = new DatabaseHelper(getContext());
+                            DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
+                                    String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], DuraIntValues[Selected], tone,
+                                    UriString, msj.getText().toString());
                         }
                     }).show();
         } else if (v.getId() == swSecMod.getId()) {
@@ -333,18 +340,22 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Mensaje en pantalla")
                     .setView(nView)
-                    .setPositiveButton("aceptar", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
                         @SuppressLint("SetTextI18n")
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             if (!txt.getText().toString().equals("")) {
                                 msj.setText("Mensaje: " + txt.getText().toString());
+                                DatabaseHelper DB = new DatabaseHelper(getContext());
+                                DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
+                                        String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], DuraIntValues[Selected], tone,
+                                        UriString, msj.getText().toString());
                             } else {
                                 msj.setText("Debes de escribir un mensaje");
                             }
                         }
                     })
-                    .setNegativeButton("cancelar", null).show();
+                    .setNegativeButton("Cancelar", null).show();
         } else if (v.getId() == btnBloquear.getId()) {
 
             devicePolicyManager = (DevicePolicyManager) getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
@@ -401,7 +412,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
                 if (networkInfo == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Ups! ha ocurrido un error")
-                            .setMessage("Por favor active conexion de datos mobiles o wifi")
+                            .setMessage("Por favoactive conexion de datos mobiles o wifir ")
                             .setPositiveButton("Aceptar", null)
                             .show();
                 } else if (networkInfo.getTypeName().equals("WIFI")) {
@@ -422,7 +433,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
 
                 } else if (networkInfo.getTypeName().equals("MOBILE")) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 10, locationListenerNetwork);
-                    dialog = ProgressDialog.show(getActivity(), "", "Buscando localizacion");
+                    dialog = ProgressDialog.show(getActivity(), "", "Buscando localización");
                 }
 
             }
@@ -486,7 +497,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
                     .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             locationManager.removeUpdates(locationListenerGPS);
@@ -534,7 +545,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setTitle("Localizacion")
                     .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             locationManager.removeUpdates(locationListenerNetwork);
@@ -565,14 +576,20 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RQS_RINGTONEPICKER) {
             if (resultCode == RESULT_OK) {
-                Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                UriString = uri.toString();
-                System.out.println(UriString);
-                ringtone = RingtoneManager.getRingtone(getContext(), uri);
-                btnTone.setText(ringtone.getTitle(getContext()));
-                tone = ringtone.getTitle(getContext());
-            } else if (REQUEST_ENABLE == requestCode) {
-                super.onActivityResult(requestCode, resultCode, data);
+                try {
+                    Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                    UriString = uri.toString();
+                    System.out.println(UriString);
+                    ringtone = RingtoneManager.getRingtone(getContext(), uri);
+                    btnTone.setText(ringtone.getTitle(getContext()));
+                    tone = ringtone.getTitle(getContext());
+                    DatabaseHelper DB = new DatabaseHelper(getContext());
+                    DB.insertaMecanismos(Comands.getID(), String.valueOf(swSecMod.isChecked()), String.valueOf(swBloqueo.isChecked()),
+                            String.valueOf(rbParcial.isChecked()), String.valueOf(rbTotal.isChecked()), DuraOptions[Selected], DuraIntValues[Selected], tone,
+                            UriString, msj.getText().toString());
+                } catch (Exception e){
+                    btnTone.setText("Sin tono");
+                }
             }
         } else if (requestCode == REQUEST_ENABLE) {
             if (resultCode == Activity.RESULT_OK) {

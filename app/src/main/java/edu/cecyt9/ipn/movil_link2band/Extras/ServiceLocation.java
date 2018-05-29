@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
@@ -46,7 +47,6 @@ public class ServiceLocation extends Service {
         ID = intent.getStringExtra("ID");
         SecMode = intent.getStringExtra("SecMode");
         Log.d("ServiceLoc", "Ya empezó");
-        startTimer();
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
@@ -63,10 +63,10 @@ public class ServiceLocation extends Service {
             if (networkInfo != null) {
                 if (networkInfo.getTypeName().equals("MOBILE")) {
                     Log.d("ServiceLoc", "Entró a mobile");
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 10, locationListenerNetwork);
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 1, locationListenerNetwork);
                 } else if (networkInfo.getTypeName().equals("WIFI")) {
                     Log.d("ServiceLoc", "Entró a wifi");
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 100, 10, locationListenerGPS);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 100, 1, locationListenerGPS);
                 }
             }
         }
@@ -139,60 +139,35 @@ public class ServiceLocation extends Service {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 Log.d("ServiceLoc", "Mandó los datos :D");
-                stoptimertask();
             }
         };
+        ws.SetShowDialogs(false);
+        String modo = "";
+        if (mode.equals("true")) modo = "Activado";
+        else if (mode.equals("false")) modo = "Desactivado";
+        String status = "";
+        KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+        if( myKM.inKeyguardRestrictedInputMode()) {
+            status = "Bloqueado";
+        } else {
+            status = "Desbloqueado";
+        }
         ws.execute(new String[]{"ID", "Loc", "Status", "secureMode"},
-                new String[]{ID, loc, stat, mode});
+                new String[]{ID, loc, status, modo});
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         System.out.println("Service LOC On Destroy");
+        locationManager.removeUpdates(locationListenerGPS);
+        locationManager.removeUpdates(locationListenerNetwork);
 //        if (Restart) {
 //            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
 //            broadcastIntent.putExtra("ID", ID);
 //            broadcastIntent.putExtra("SecMode", SecMode);
 //            sendBroadcast(broadcastIntent);
 //        }
-    }
-
-    private Timer timer;
-    private TimerTask timerTask;
-    long oldTime = 0;
-
-    public void startTimer() {
-        //set a new Timer
-        timer = new Timer();
-
-        //initialize the TimerTask's job
-        initializeTimerTask();
-
-        //schedule the timer, to wake up every 1 second
-        timer.schedule(timerTask, 1000, 1000); //
-    }
-
-    /**
-     * it sets the timer to print the counter every x seconds
-     */
-    public void initializeTimerTask() {
-        timerTask = new TimerTask() {
-            public void run() {
-                Log.i("TIMER", "LOC: " + (counter++));
-            }
-        };
-    }
-
-    /**
-     * not needed
-     */
-    public void stoptimertask() {
-        //stop the timer, if it's not already null
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
     }
 
     @Nullable

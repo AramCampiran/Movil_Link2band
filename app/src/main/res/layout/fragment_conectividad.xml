@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="edu.cecyt9.ipn.movil_link2band.Bluetooth.conectividad">
+    tools:context="edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -21,7 +21,8 @@
         android:id="@+id/lista"
         android:layout_width="match_parent"
         android:layout_height="30mm"
-        android:layout_marginTop="2mm" />
+        android:layout_marginTop="2mm"
+        />
 
     <LinearLayout
         android:layout_width="wrap_content"

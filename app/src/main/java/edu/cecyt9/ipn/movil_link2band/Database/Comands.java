@@ -17,6 +17,7 @@ public class Comands {
     private static String PARBLOCK;
     private static String TOTBLOCK;
     private static String DURATION;
+    private static int DURATION_SECONDS;
     private static String TONE;
     private static String URISTRING;
     private static String MSJ;
@@ -63,8 +64,11 @@ public class Comands {
         Comands.PARBLOCK = null;
         Comands.TOTBLOCK = null;
         Comands.DURATION = null;
+        Comands.DURATION_SECONDS = 0;
         Comands.TONE = null;
+        Comands.URISTRING = null;
         Comands.MSJ = null;
+        Comands.ADDRESS = null;
     }
 
     public static String getSMODE() {return SMODE;}
@@ -86,6 +90,10 @@ public class Comands {
     public static String getDURATION() {return DURATION;}
 
     public static void setDURATION(String DURATION) {Comands.DURATION = DURATION;}
+
+    public static int getDURATION_SECONDS() {return DURATION_SECONDS;}
+
+    public static void setDURATION_SECONDS(int DURATION_SECONDS) {Comands.DURATION_SECONDS = DURATION_SECONDS;}
 
     public static String getTONE() {return TONE;}
 

@@ -12,11 +12,11 @@ public class SensorRestarterBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(SensorRestarterBroadcastReceiver.class.getSimpleName(), "Service Stops!");
-        Intent service = new Intent(context, ServiceLocation.class);
-        String id = intent.getStringExtra("ID");
-        String modo = intent.getStringExtra("SecMode");
-        service.putExtra("ID", id);
-        service.putExtra("SecMode", modo);
-        context.startService(service);
+//        Intent service = new Intent(context, ServiceLocation.class);
+//        String id = intent.getStringExtra("ID");
+//        String modo = intent.getStringExtra("SecMode");
+//        service.putExtra("ID", id);
+//        service.putExtra("SecMode", modo);
+//        context.startService(service);
     }
 }

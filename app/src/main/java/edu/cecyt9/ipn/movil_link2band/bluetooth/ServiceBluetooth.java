@@ -10,16 +10,25 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -27,6 +36,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import edu.cecyt9.ipn.movil_link2band.Database.Comands;
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.Extras.ServiceLocation;
 import edu.cecyt9.ipn.movil_link2band.R;
 import edu.cecyt9.ipn.movil_link2band.principal;
@@ -35,7 +46,8 @@ import edu.cecyt9.ipn.movil_link2band.principal;
  * Created by fabio on 30/01/2016.
  */
 public class ServiceBluetooth extends Service {
-    public int counter = 0, notiID = 1303;
+    private DatabaseHelper DB;
+    public int counter = 0, notiID = 1303, DurationSeconds = 0;
     private String Address, UriString, Msj, ID, SecMode;
     private Intent serviceloc;
     private boolean Restart;
@@ -52,10 +64,9 @@ public class ServiceBluetooth extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         ID = intent.getStringExtra("ID");
-        SecMode = intent.getStringExtra("SecMode");
-        Address = intent.getStringExtra("Address");
-        UriString = intent.getStringExtra("UriString");
-//        Msj = intent.getStringExtra("Msj");
+        DB = new DatabaseHelper(getApplicationContext());
+        DB.consulta(ID);
+        Address = Comands.getADDRESS();
         BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(Address);
         try {
@@ -79,8 +90,10 @@ public class ServiceBluetooth extends Service {
                                         0)
                         ).build();
                 startForeground(notiID, notification);
-                startTimer();
                 Toast.makeText(getApplicationContext(), "Conexión exitosa", Toast.LENGTH_SHORT).show();
+                Intent intento = new Intent("DEVICETXT");
+                intento.putExtra("connected", true);
+                sendBroadcast(intento);
             } else {
                 try {
                     bTSocket.close();
@@ -90,7 +103,10 @@ public class ServiceBluetooth extends Service {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "No se pudo establecer la conexión", Toast.LENGTH_SHORT).show();
+            Intent intento = new Intent("DEVICETXT");
+            intento.putExtra("connected", false);
+            sendBroadcast(intento);
             stopSelf();
         }
         return START_STICKY;
@@ -103,9 +119,13 @@ public class ServiceBluetooth extends Service {
             if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getName().equals("L2B BAND")) {
+                    DB.consulta(ID);
+                    SecMode = Comands.getSMODE();
+                    UriString = Comands.getURISTRING();
+                    Msj = Comands.getMSJ();
+                    DurationSeconds = Comands.getDURATION_SECONDS();
                     Bloqueo();
                     Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
-                    stoptimertask();
                     serviceloc = new Intent(getApplicationContext(), ServiceLocation.class);
                     serviceloc.putExtra("ID", ID);
                     serviceloc.putExtra("SecMode", SecMode);
@@ -124,6 +144,7 @@ public class ServiceBluetooth extends Service {
         ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
         try {
             ringtone.play();
+            startTimer();
             devicePolicyManager.lockNow();
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_USER_PRESENT);
@@ -132,7 +153,8 @@ public class ServiceBluetooth extends Service {
             notification = new NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle("Link2Band")
-                    .setContentText("Pulsera desconectada\nLos mecanismos de seguridad se ejecutaron correctamente")
+                    .setContentText("Pulsera desconectada")
+                    .setSubText("Los mecanismos de seguridad se ejecutaron correctamente")
                     .setContentIntent(
                             PendingIntent.getActivity(getApplicationContext(), 10,
                                     new Intent(getApplicationContext(), principal.class)
@@ -201,6 +223,14 @@ public class ServiceBluetooth extends Service {
         timerTask = new TimerTask() {
             public void run() {
                 Log.i("TIMER", "BT: " + (counter++));
+                if (counter >= DurationSeconds) {
+                    if (ringtone != null) {
+                        if (ringtone.isPlaying()) {
+                            ringtone.stop();
+                        }
+                    }
+                    stoptimertask();
+                }
             }
         };
     }

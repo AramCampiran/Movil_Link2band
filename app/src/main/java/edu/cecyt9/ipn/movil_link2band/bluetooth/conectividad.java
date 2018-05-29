@@ -1,5 +1,6 @@
 package edu.cecyt9.ipn.movil_link2band.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -10,9 +11,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +26,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import org.kobjects.util.Util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
+import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.R;
 
 
@@ -47,6 +56,8 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
     ArrayList<BluetoothDevice> vinculados, cercanos;
     ArrayList<String> adress;
     ListView list, list2;
+    String ACTION_SETDEVICETXT = "DEVICETXT", DeviceName;
+    TextView selectedDevice;
     ToggleButton btnAnalizar;
     BluetoothAdapter bluetoothAdapter;
     BluetoothDevice device;
@@ -155,7 +166,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    IniciaServicio(adress.get(i));
+                    IniciaServicio(adress.get(i), list, i);
                 }
             });
 
@@ -163,14 +174,14 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if (isPaired(cercanos.get(i))) {
-                        IniciaServicio(cercanos.get(i).getAddress());
+                        IniciaServicio(cercanos.get(i).getAddress(), list2, i);
                     } else {
-                        byte[] pin = (""+0000).getBytes();
+                        byte[] pin = ("" + 0000).getBytes();
                         cercanos.get(i).setPin(pin);
                         try {
                             cercanos.get(i).setPairingConfirmation(true);
                         } catch (SecurityException e) {
-                            System.out.println("Error xd: " + e.getMessage() + " | " + e.getCause() );
+                            System.out.println("Error xd: " + e.getMessage() + " | " + e.getCause());
                         }
                         System.out.println("Ganamos :D");
 
@@ -217,16 +228,55 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
 
     //SERVICIO
 
-    public void IniciaServicio(String address) {
+    public void IniciaServicio(String address, ListView lista, int i) {
         if (!isMyServiceRunning(ServiceBluetooth.class)) {
+            selectedDevice = (TextView) lista.getChildAt(i - lista.getFirstVisiblePosition());
+            DeviceName = selectedDevice.getText().toString();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                selectedDevice.setText(Html.fromHtml("<html><b>" + DeviceName + "</b><br>Conectando...</html>", Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                selectedDevice.setText(Html.fromHtml("<html><b>" + DeviceName + "</b><br>Conectando...</html>"));
+            }
+            getContext().registerReceiver(mMessageReceiver, new IntentFilter(ACTION_SETDEVICETXT));
+            DatabaseHelper DB = new DatabaseHelper(getContext());
+            DB.insertaAddress(Comands.getID(), address);
             Intent ServiceIntent = new Intent(getActivity(), ServiceBluetooth.class);
             ServiceIntent.putExtra("ID", Comands.getID());
-            ServiceIntent.putExtra("SecMode", Comands.getSMODE());
-            ServiceIntent.putExtra("Address", address);
-            ServiceIntent.putExtra("UriString", Comands.getURISTRING());
-            ServiceIntent.putExtra("Msj", Comands.getMSJ());
             getActivity().startService(ServiceIntent);
         }
+    }
+
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @SuppressLint("ResourceAsColor")
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(ACTION_SETDEVICETXT)) {
+                boolean connected = intent.getBooleanExtra("connected", false);
+                if (connected) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        selectedDevice.setText(Html.fromHtml("<html><b>" + DeviceName + "</b><br>Conectado</html>", Html.FROM_HTML_MODE_COMPACT));
+                    } else {
+                        selectedDevice.setText(Html.fromHtml("<html><b>" + DeviceName + "</b><br>Conectado</html>"));
+                    }
+                    selectedDevice.setTextColor(R.color.colorAccentII);
+                } else {
+                    selectedDevice.setText(DeviceName);
+                    selectedDevice.setTextColor(Color.BLACK);
+                }
+            }
+        }
+    };
+
+    public void SelectConnected(ListView lista, int i) {
+//        if (list.equals(lista)) {
+//            String selectedFromList = (String) list.getItemAtPosition(i);
+//            Toast.makeText(getContext(), selectedFromList, T)
+//        } else if (list2.equals(lista)) {
+//
+//        } else {
+//            Toast.makeText(getContext(), "Ocurrió un error, intenta reiniciar la aplicación", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -291,7 +341,6 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             }
         }
     }
-
 
 
     // TODO: Rename method, update argument and hook method into UI event

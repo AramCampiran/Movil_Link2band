@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Arreglo para campos que quieres que regresen
         String[] campos = {Utilidades.CAMPO_ID, Utilidades.CAMPO_LOC, Utilidades.CAMPO_NOM, Utilidades.CAMPO_PASS, Utilidades.CAMPO_MAIL,
                             Utilidades.CAMPO_SMODE, Utilidades.CAMPO_BLOCK, Utilidades.CAMPO_PARBLOCK, Utilidades.CAMPO_TOTBLOCK, Utilidades.CAMPO_DURATION,
-                            Utilidades.CAMPO_TONE, Utilidades.CAMPO_URISTRING, Utilidades.CAMPO_MSJ};
+                            Utilidades.CAMPO_DURATION_SECONDS, Utilidades.CAMPO_TONE, Utilidades.CAMPO_URISTRING, Utilidades.CAMPO_MSJ, Utilidades.CAMPO_ADDRESS};
 
         try {
             Cursor cursor = DB.query(Utilidades.TABLE_NAME, campos, Utilidades.CAMPO_ID + "=?", parameters, null, null,null);
@@ -76,9 +76,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Comands.setPARBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_PARBLOCK)));
                 Comands.setTOTBLOCK(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TOTBLOCK)));
                 Comands.setDURATION(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_DURATION)));
+                Comands.setDURATION_SECONDS(cursor.getInt(cursor.getColumnIndex(Utilidades.CAMPO_DURATION_SECONDS)));
                 Comands.setTONE(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_TONE)));
                 Comands.setURISTRING(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_URISTRING)));
                 Comands.setMSJ(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_MSJ)));
+                Comands.setADDRESS(cursor.getString(cursor.getColumnIndex(Utilidades.CAMPO_ADDRESS)));
             }
             cursor.close();
             return true;
@@ -101,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertaMecanismos(String id, String sMode, String block, String parBlock,
-                                  String totBlock,  String duration, String tone, String UriString, String msj){
+                                  String totBlock,  String duration, int durationSeconds, String tone, String UriString, String msj){
         SQLiteDatabase DB = getWritableDatabase();
         String [] parameters = {id};
         ContentValues values = new ContentValues();
@@ -111,6 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Utilidades.CAMPO_PARBLOCK, parBlock);
         values.put(Utilidades.CAMPO_TOTBLOCK, totBlock);
         values.put(Utilidades.CAMPO_DURATION, duration);
+        values.put(Utilidades.CAMPO_DURATION_SECONDS, durationSeconds);
         values.put(Utilidades.CAMPO_TONE, tone);
         values.put(Utilidades.CAMPO_URISTRING, UriString);
         values.put(Utilidades.CAMPO_MSJ, msj);
@@ -123,9 +126,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Comands.setPARBLOCK(parBlock);
         Comands.setTOTBLOCK(totBlock);
         Comands.setDURATION(duration);
+        Comands.setDURATION_SECONDS(durationSeconds);
         Comands.setTONE(tone);
         Comands.setURISTRING(UriString);
         Comands.setMSJ(msj);
+    }
+
+    public void insertaAddress(String id, String address) {
+        SQLiteDatabase DB = getWritableDatabase();
+        String [] parameters = {id};
+        ContentValues values = new ContentValues();
+        values.put(Utilidades.CAMPO_ADDRESS, address);
+        DB.update(Utilidades.TABLE_NAME, values, Utilidades.CAMPO_ID + "=?", parameters);
+        DB.close();
+        Comands.setADDRESS(address);
     }
 
     public void bajaUSR(String id){
