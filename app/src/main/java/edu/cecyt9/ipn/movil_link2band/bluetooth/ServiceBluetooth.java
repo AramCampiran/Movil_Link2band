@@ -37,6 +37,7 @@ import edu.cecyt9.ipn.movil_link2band.principal;
 public class ServiceBluetooth extends Service {
     public int counter = 0, notiID = 1303;
     private String Address, UriString, Msj, ID, SecMode;
+    private Intent serviceloc;
     private boolean Restart;
     private Ringtone ringtone;
     private Notification notification;
@@ -105,7 +106,10 @@ public class ServiceBluetooth extends Service {
                     Bloqueo();
                     Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
                     stoptimertask();
-                    startService(new Intent(getApplicationContext(), ServiceLocation.class));
+                    serviceloc = new Intent(getApplicationContext(), ServiceLocation.class);
+                    serviceloc.putExtra("ID", ID);
+                    serviceloc.putExtra("SecMode", SecMode);
+                    startService(serviceloc);
                 }
             }
         }
@@ -114,8 +118,8 @@ public class ServiceBluetooth extends Service {
     @SuppressLint("NewApi")
     private void Bloqueo() {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getApplicationContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
-//        AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-//        am.setStreamVolume(AudioManager.STREAM_RING, am.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
+        AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        am.setStreamVolume(AudioManager.STREAM_RING, am.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
         Uri uri = Uri.parse(UriString);
         ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
         try {
@@ -136,11 +140,6 @@ public class ServiceBluetooth extends Service {
                                     0)
                     ).build();
             startForeground(notiID, notification);
-            Intent serviceloc = new Intent(getApplicationContext(), ServiceLocation.class);
-            serviceloc.putExtra("ID", ID);
-            serviceloc.putExtra("SecMode", SecMode);
-            startService(serviceloc);
-            System.out.println(ID + ", " + SecMode);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Hubo un problema para ejecutar los mecanismos", Toast.LENGTH_SHORT).show();
         }
@@ -157,6 +156,11 @@ public class ServiceBluetooth extends Service {
                     }
                 }
 //                Restart = false;
+                try {
+                    stopService(serviceloc);
+                } catch (RuntimeException e) {
+                    System.out.println("El servicio no está corriendo");
+                }
                 stopSelf();
             }
         }
@@ -196,7 +200,7 @@ public class ServiceBluetooth extends Service {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("in timer", "in timer ++++  " + (counter++));
+                Log.i("TIMER", "BT: " + (counter++));
             }
         };
     }

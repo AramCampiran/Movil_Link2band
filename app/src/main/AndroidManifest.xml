@@ -63,7 +63,7 @@
         <service
             android:name="edu.cecyt9.ipn.movil_link2band.Extras.ServiceLocation"
             android:enabled="true"
-            android:process=":BTprocess"/>
+            android:process=":LOCprocess"/>
 
         <receiver
             android:name="edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver"

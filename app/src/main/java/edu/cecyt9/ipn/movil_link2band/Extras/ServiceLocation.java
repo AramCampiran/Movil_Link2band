@@ -23,11 +23,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 
 public class ServiceLocation extends Service {
 
+    public int counter = 0;
     private LocationManager locationManager;
     private String longitud, latitud, SecMode, ID;
     private boolean Restart = true;
@@ -39,9 +43,11 @@ public class ServiceLocation extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        System.out.println("ya empezó");
-        SecMode = intent.getStringExtra("SecMode");
         ID = intent.getStringExtra("ID");
+        SecMode = intent.getStringExtra("SecMode");
+        Log.d("ServiceLoc", "Ya empezó");
+        startTimer();
+        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -53,39 +59,16 @@ public class ServiceLocation extends Service {
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-//            return;
-        }
-        if (networkInfo == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-            builder.setTitle("Ups! ha ocurrido un error")
-                    .setMessage("Por favor active conexion de datos mobiles o wifi")
-                    .setPositiveButton("Aceptar", null)
-                    .show();
-        } else if (networkInfo.getTypeName().equals("WIFI")) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 100, 10, locationListenerGPS);
-//            dialog = new ProgressDialog(getApplicationContext());
-//            dialog.setMessage("Buscando localizacion");
-//            dialog.setMax(300);
-//            dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    dialog.dismiss();
-//                    locationManager.removeUpdates(locationListenerGPS);
-//                    locationManager.removeUpdates(locationListenerNetwork);
-//                }
-//            });
-//            dialog.show();
-        } else if (networkInfo.getTypeName().equals("MOBILE")) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 10, locationListenerNetwork);
-//            dialog = ProgressDialog.show(getApplicationContext(), "", "Buscando localizacion");
+        } else {
+            if (networkInfo != null) {
+                if (networkInfo.getTypeName().equals("MOBILE")) {
+                    Log.d("ServiceLoc", "Entró a mobile");
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2 * 20 * 1000, 10, locationListenerNetwork);
+                } else if (networkInfo.getTypeName().equals("WIFI")) {
+                    Log.d("ServiceLoc", "Entró a wifi");
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2 * 20 * 100, 10, locationListenerGPS);
+                }
+            }
         }
         return START_STICKY;
     }
@@ -95,20 +78,8 @@ public class ServiceLocation extends Service {
         public void onLocationChanged(final Location location) {
             longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
-            System.out.println("Latitud: " + latitud + "\n" + " Longitud: " + longitud);
-//            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-//            alert.setTitle("Localizacion")
-//                    .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
-//                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            locationManager.removeUpdates(locationListenerGPS);
-//                        }
-//                    }).show();
-//            dialog.dismiss();
+            Log.d("ServiceLoc", "GPS LOC: " + latitud + ", " + longitud);
             actualizaLoc(latitud + ", " + longitud, "Desbloqueado", SecMode);
-            DatabaseHelper DB = new DatabaseHelper(getApplicationContext());
-            DB.actualiza(Comands.getID(), latitud + ", " + longitud);
         }
 
         @Override
@@ -143,20 +114,8 @@ public class ServiceLocation extends Service {
         public void onLocationChanged(Location location) {
             longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
-            System.out.println("Latitud: " + location.getLatitude() + " Longitud: " + location.getLongitude());
-//            AlertDialog.Builder alert = new AlertDialog.Builder(getApplicationContext());
-//            alert.setTitle("Localizacion")
-//                    .setMessage("Latitud: " + latitud + "\n" + " Longitud: " + longitud)
-//                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            locationManager.removeUpdates(locationListenerNetwork);
-//                        }
-//                    }).show();
-//            dialog.dismiss();
+            Log.d("ServiceLoc", "NETWORK LOC: " + latitud + ", " + longitud);
             actualizaLoc(latitud + ", " + longitud, "Desbloqueado", SecMode);
-            DatabaseHelper DB = new DatabaseHelper(getApplicationContext());
-            DB.actualiza(Comands.getID(), latitud + ", " + longitud);
         }
 
         @Override
@@ -179,10 +138,8 @@ public class ServiceLocation extends Service {
         @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("SetDatosMovil", getApplicationContext()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
-//                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-//                alert.setMessage("Datos enviados")
-//                        .setPositiveButton("Ok", null).show();
-//                System.out.println("Datos enviados");
+                Log.d("ServiceLoc", "Mandó los datos :D");
+                stoptimertask();
             }
         };
         ws.execute(new String[]{"ID", "Loc", "Status", "secureMode"},
@@ -193,11 +150,48 @@ public class ServiceLocation extends Service {
     public void onDestroy() {
         super.onDestroy();
         System.out.println("Service LOC On Destroy");
-        if (Restart) {
-            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
-            broadcastIntent.putExtra("ID", ID);
-            broadcastIntent.putExtra("SecMode", SecMode);
-            sendBroadcast(broadcastIntent);
+//        if (Restart) {
+//            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
+//            broadcastIntent.putExtra("ID", ID);
+//            broadcastIntent.putExtra("SecMode", SecMode);
+//            sendBroadcast(broadcastIntent);
+//        }
+    }
+
+    private Timer timer;
+    private TimerTask timerTask;
+    long oldTime = 0;
+
+    public void startTimer() {
+        //set a new Timer
+        timer = new Timer();
+
+        //initialize the TimerTask's job
+        initializeTimerTask();
+
+        //schedule the timer, to wake up every 1 second
+        timer.schedule(timerTask, 1000, 1000); //
+    }
+
+    /**
+     * it sets the timer to print the counter every x seconds
+     */
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                Log.i("TIMER", "LOC: " + (counter++));
+            }
+        };
+    }
+
+    /**
+     * not needed
+     */
+    public void stoptimertask() {
+        //stop the timer, if it's not already null
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
         }
     }
 

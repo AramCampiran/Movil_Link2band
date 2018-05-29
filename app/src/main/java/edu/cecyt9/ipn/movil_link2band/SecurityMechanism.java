@@ -374,7 +374,7 @@ public class SecurityMechanism extends Fragment implements View.OnClickListener,
 
         } else if (v.getId() == btnLocalizar.getId()) {
             System.out.println("Loc: " + Comands.getLOC());
-            if (!Comands.getLOC().equals("null")) {
+            if (Comands.getLOC() != null ) {
                 actualizaLoc(Comands.getLOC(), "Bloqueado", SecMode);
             } else {
                 ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
