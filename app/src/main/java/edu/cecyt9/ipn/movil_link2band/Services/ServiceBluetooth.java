@@ -1,4 +1,4 @@
-package edu.cecyt9.ipn.movil_link2band.bluetooth;
+package edu.cecyt9.ipn.movil_link2band.Services;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -9,8 +9,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -21,14 +21,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AlertDialog;
-import android.text.Html;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -36,9 +29,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import edu.cecyt9.ipn.movil_link2band.Darclass;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
-import edu.cecyt9.ipn.movil_link2band.Extras.ServiceLocation;
 import edu.cecyt9.ipn.movil_link2band.R;
 import edu.cecyt9.ipn.movil_link2band.principal;
 
@@ -117,19 +110,25 @@ public class ServiceBluetooth extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (device.getName().equals("L2B BAND")) {
-                    DB.consulta(ID);
-                    SecMode = Comands.getSMODE();
-                    UriString = Comands.getURISTRING();
-                    Msj = Comands.getMSJ();
-                    DurationSeconds = Comands.getDURATION_SECONDS();
-                    Bloqueo();
-                    Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
-                    serviceloc = new Intent(getApplicationContext(), ServiceLocation.class);
-                    serviceloc.putExtra("ID", ID);
-                    serviceloc.putExtra("SecMode", SecMode);
-                    startService(serviceloc);
+                Intent intento = new Intent("DISCONNECTDEVICETXT");
+                sendBroadcast(intento);
+                if (Boolean.valueOf(Comands.getSMODE())) {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    if (device.getName().equals("L2B BAND")) {
+                        DB.consulta(ID);
+                        SecMode = Comands.getSMODE();
+                        UriString = Comands.getURISTRING();
+                        Msj = Comands.getMSJ();
+                        DurationSeconds = Comands.getDURATION_SECONDS();
+                        Bloqueo();
+                        Toast.makeText(getApplicationContext(), "Pulsera desconectada\nIniciando mecanismos...", Toast.LENGTH_SHORT).show();
+                        serviceloc = new Intent(getApplicationContext(), ServiceLocation.class);
+                        serviceloc.putExtra("ID", ID);
+                        serviceloc.putExtra("SecMode", SecMode);
+                        startService(serviceloc);
+                    }
+                } else {
+                    stopSelf();
                 }
             }
         }
@@ -140,12 +139,15 @@ public class ServiceBluetooth extends Service {
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getApplicationContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
         AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(AudioManager.STREAM_RING, am.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
-        Uri uri = Uri.parse(UriString);
-        ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
         try {
+            Uri uri = Uri.parse(UriString);
+            ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
             ringtone.play();
             startTimer();
             devicePolicyManager.lockNow();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                devicePolicyManager.setDeviceOwnerLockScreenInfo(new ComponentName(getApplicationContext(), Darclass.class), Msj);
+            }
             IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_USER_PRESENT);
             this.registerReceiver(UnlockReceiver, filter);
@@ -193,11 +195,6 @@ public class ServiceBluetooth extends Service {
     public void onDestroy() {
         super.onDestroy();
         System.out.println("Service On Destroy");
-//        if (Restart) {
-//            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
-//            broadcastIntent.putExtra("Address", Address);
-//            sendBroadcast(broadcastIntent);
-//        }
         stoptimertask();
     }
 
@@ -208,7 +205,7 @@ public class ServiceBluetooth extends Service {
     public void startTimer() {
         //set a new Timer
         timer = new Timer();
-
+        counter = 0;
         //initialize the TimerTask's job
         initializeTimerTask();
 

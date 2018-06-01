@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.UserHandle;
@@ -24,6 +25,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.cecyt9.ipn.movil_link2band.Services.SensorRestarterBroadcastReceiver;
+import edu.cecyt9.ipn.movil_link2band.Services.ServiceActions;
+import edu.cecyt9.ipn.movil_link2band.Services.ServiceBluetooth;
+import edu.cecyt9.ipn.movil_link2band.Services.ServiceLocation;
 import edu.cecyt9.ipn.movil_link2band.bluetooth.conectividad;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
@@ -76,6 +81,8 @@ public class principal extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPrincipal, fragment).commit();
         getSupportActionBar().setTitle("Mecanismos de seguridad");
         navigationView.setCheckedItem(R.id.nav_mechanism);
+
+        startService(new Intent(this, ServiceActions.class));
     }
 
     @Override
@@ -137,6 +144,10 @@ public class principal extends AppCompatActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             conect = new DatabaseHelper(getApplicationContext());
                             conect.bajaUSR(Comands.getID());
+                            Intent intento = new Intent("LogOut");
+                            getApplicationContext().sendBroadcast(intento);
+                            stopService(new Intent(getApplicationContext(), ServiceLocation.class));
+                            stopService(new Intent(getApplicationContext(), ServiceBluetooth.class));
                             finish();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         }

@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -27,12 +26,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import org.kobjects.util.Util;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -40,6 +35,7 @@ import java.util.UUID;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
 import edu.cecyt9.ipn.movil_link2band.R;
+import edu.cecyt9.ipn.movil_link2band.Services.ServiceBluetooth;
 
 
 /**
@@ -173,21 +169,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
             list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    if (isPaired(cercanos.get(i))) {
-                        IniciaServicio(cercanos.get(i).getAddress(), list2, i);
-                    } else {
-                        byte[] pin = ("" + 0000).getBytes();
-                        cercanos.get(i).setPin(pin);
-                        try {
-                            cercanos.get(i).setPairingConfirmation(true);
-                        } catch (SecurityException e) {
-                            System.out.println("Error xd: " + e.getMessage() + " | " + e.getCause());
-                        }
-                        System.out.println("Ganamos :D");
-
-//                        IntentFilter intent = new IntentFilter(BluetoothDevice.ACTION_PAIRING_REQUEST);
-//                        getContext().registerReceiver(mPairing, intent);
-                    }
+                    IniciaServicio(adress.get(i), list2, i);
                 }
             });
         }
@@ -238,6 +220,7 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                 selectedDevice.setText(Html.fromHtml("<html><b>" + DeviceName + "</b><br>Conectando...</html>"));
             }
             getContext().registerReceiver(mMessageReceiver, new IntentFilter(ACTION_SETDEVICETXT));
+            getContext().registerReceiver(mMessageReceiver, new IntentFilter("DISCONNECTDEVICETXT"));
             DatabaseHelper DB = new DatabaseHelper(getContext());
             DB.insertaAddress(Comands.getID(), address);
             Intent ServiceIntent = new Intent(getActivity(), ServiceBluetooth.class);
@@ -264,20 +247,13 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
                     selectedDevice.setText(DeviceName);
                     selectedDevice.setTextColor(Color.BLACK);
                 }
+            } else if (action.equals("DISCONNECTDEVICETXT")) {
+                selectedDevice.setText(DeviceName);
+                selectedDevice.setTextColor(Color.BLACK);
             }
         }
     };
 
-    public void SelectConnected(ListView lista, int i) {
-//        if (list.equals(lista)) {
-//            String selectedFromList = (String) list.getItemAtPosition(i);
-//            Toast.makeText(getContext(), selectedFromList, T)
-//        } else if (list2.equals(lista)) {
-//
-//        } else {
-//            Toast.makeText(getContext(), "Ocurrió un error, intenta reiniciar la aplicación", Toast.LENGTH_SHORT).show();
-//        }
-    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
@@ -294,7 +270,6 @@ public class conectividad extends Fragment implements AbsListView.OnItemClickLis
     //FIN SERVICIO
 
     private void bluetooth(String tipo) {
-
         if (tipo.equals("vinculados")) {
             Set<BluetoothDevice> pairedDevicesList = bluetoothAdapter.getBondedDevices();
             for (BluetoothDevice pairedDevice : pairedDevicesList) {

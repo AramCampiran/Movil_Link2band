@@ -1,4 +1,4 @@
-package edu.cecyt9.ipn.movil_link2band.Extras;
+package edu.cecyt9.ipn.movil_link2band.Services;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,15 +29,16 @@ import android.util.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.cecyt9.ipn.movil_link2band.Darclass;
 import edu.cecyt9.ipn.movil_link2band.Database.Comands;
 import edu.cecyt9.ipn.movil_link2band.Database.DatabaseHelper;
+import edu.cecyt9.ipn.movil_link2band.Extras.WS_Cliente;
 
 public class ServiceLocation extends Service {
 
     public int counter = 0;
     private LocationManager locationManager;
-    private String longitud, latitud, SecMode, ID;
-    private boolean Restart = true;
+    private String longitud, latitud, ID;
 
     public ServiceLocation() {
         Log.d("Location", "Hello there!");
@@ -45,7 +48,6 @@ public class ServiceLocation extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         ID = intent.getStringExtra("ID");
-        SecMode = intent.getStringExtra("SecMode");
         Log.d("ServiceLoc", "Ya empezó");
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -79,7 +81,7 @@ public class ServiceLocation extends Service {
             longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
             Log.d("ServiceLoc", "GPS LOC: " + latitud + ", " + longitud);
-            actualizaLoc(latitud + ", " + longitud, "Desbloqueado", SecMode);
+            actualizaLoc(latitud + ", " + longitud);
         }
 
         @Override
@@ -115,7 +117,7 @@ public class ServiceLocation extends Service {
             longitud = String.valueOf(location.getLongitude());
             latitud = String.valueOf(location.getLatitude());
             Log.d("ServiceLoc", "NETWORK LOC: " + latitud + ", " + longitud);
-            actualizaLoc(latitud + ", " + longitud, "Desbloqueado", SecMode);
+            actualizaLoc(latitud + ", " + longitud);
         }
 
         @Override
@@ -134,26 +136,17 @@ public class ServiceLocation extends Service {
         }
     };
 
-    private void actualizaLoc(String loc, String stat, String mode) {
-        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("SetDatosMovil", getApplicationContext()) {
+    private void actualizaLoc(String loc) {
+        @SuppressLint("StaticFieldLeak") WS_Cliente ws = new WS_Cliente("SetLOCMovil", getApplicationContext()) {
             @Override
             public void onSuccessfulConnectionAttempt(Context context) {
                 Log.d("ServiceLoc", "Mandó los datos :D");
             }
         };
         ws.SetShowDialogs(false);
-        String modo = "";
-        if (mode.equals("true")) modo = "Activado";
-        else if (mode.equals("false")) modo = "Desactivado";
-        String status = "";
-        KeyguardManager myKM = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-        if( myKM.inKeyguardRestrictedInputMode()) {
-            status = "Bloqueado";
-        } else {
-            status = "Desbloqueado";
-        }
-        ws.execute(new String[]{"ID", "Loc", "Status", "secureMode"},
-                new String[]{ID, loc, status, modo});
+
+        ws.execute(new String[]{"ID", "Loc"},
+                new String[]{ID, loc});
     }
 
     @Override
@@ -162,12 +155,6 @@ public class ServiceLocation extends Service {
         System.out.println("Service LOC On Destroy");
         locationManager.removeUpdates(locationListenerGPS);
         locationManager.removeUpdates(locationListenerNetwork);
-//        if (Restart) {
-//            Intent broadcastIntent = new Intent(".ActivityRecognition.RestartSensor");
-//            broadcastIntent.putExtra("ID", ID);
-//            broadcastIntent.putExtra("SecMode", SecMode);
-//            sendBroadcast(broadcastIntent);
-//        }
     }
 
     @Nullable

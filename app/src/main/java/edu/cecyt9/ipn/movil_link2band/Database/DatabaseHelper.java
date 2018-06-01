@@ -43,11 +43,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Utilidades.CAMPO_NOM, nom);
         values.put(Utilidades.CAMPO_PASS, pass);
         values.put(Utilidades.CAMPO_MAIL, mail);
+        values.put(Utilidades.CAMPO_SMODE, "false");
         Long idResult = DB.insert(Utilidades.TABLE_NAME, Utilidades.CAMPO_ID, values);
         Comands.setID(id);
         Comands.setNOM(nom);
         Comands.setPASS(pass);
         Comands.setMAIL(mail);
+        Comands.setSMODE("false");
         Comands.setLOC("null");
         DB.close();
         System.out.println("usuario registrado con exito");

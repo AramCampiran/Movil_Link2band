@@ -57,16 +57,20 @@
         </receiver>
 
         <service
-            android:name="edu.cecyt9.ipn.movil_link2band.bluetooth.ServiceBluetooth"
+            android:name="edu.cecyt9.ipn.movil_link2band.Services.ServiceBluetooth"
             android:enabled="true"
             android:process=":BTprocess"/>
         <service
-            android:name="edu.cecyt9.ipn.movil_link2band.Extras.ServiceLocation"
+            android:name="edu.cecyt9.ipn.movil_link2band.Services.ServiceLocation"
             android:enabled="true"
             android:process=":LOCprocess"/>
+        <service
+            android:name="edu.cecyt9.ipn.movil_link2band.Services.ServiceActions"
+            android:enabled="true"
+            android:process=":ACTIONSprocess"/>
 
         <receiver
-            android:name="edu.cecyt9.ipn.movil_link2band.bluetooth.SensorRestarterBroadcastReceiver"
+            android:name="edu.cecyt9.ipn.movil_link2band.Services.SensorRestarterBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">
