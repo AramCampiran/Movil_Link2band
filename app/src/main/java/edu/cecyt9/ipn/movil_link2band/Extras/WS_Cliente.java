@@ -23,9 +23,10 @@ import edu.cecyt9.ipn.movil_link2band.MainActivity;
 public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
 
     private static final String NAMESPACE = "http://WebServer/";
-    private static String URL = "http://192.168.0.6:8080/Server_L2B/WebServer?WSDL";
+    private static String URL = "http://192.168.0.4:8080/Server_L2B/WebServer?WSDL";
     private static String METHODNAME;
     private static String SOAP_ACTION;
+    private boolean showDialogs;
     private Context context;
     private ProgressDialog PD;
     public String[] Results;
@@ -33,25 +34,32 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
     public WS_Cliente(String METHODNAME, Context context) {
         this.METHODNAME = METHODNAME;
         this.context = context;
+        showDialogs = true;
         SOAP_ACTION = NAMESPACE + METHODNAME;
     }
 
-    @Override 
+    public void SetShowDialogs(boolean showDialogs) {
+        this.showDialogs = showDialogs;
+    }
+
+    @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        PD = new ProgressDialog(context);
-        PD.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        PD.setTitle("Espere un momento");
-        PD.setMessage("Estableciendo conexión...");
-        PD.setCancelable(true);
-        PD.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                cancel(true);
-            }
-        });
-        PD.setCanceledOnTouchOutside(false);
-        PD.show();
+        if (showDialogs) {
+            PD = new ProgressDialog(context);
+            PD.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            PD.setTitle("Espere un momento");
+            PD.setMessage("Estableciendo conexión...");
+            PD.setCancelable(true);
+            PD.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancelar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cancel(true);
+                }
+            });
+            PD.setCanceledOnTouchOutside(false);
+            PD.show();
+        }
     }
 
     @Override
@@ -82,7 +90,8 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         super.onPostExecute(result);
-        PD.dismiss();
+        if (showDialogs)
+            PD.dismiss();
         if (result) {
             onSuccessfulConnectionAttempt(context);
         } else {
@@ -91,15 +100,18 @@ public class WS_Cliente extends AsyncTask<String[], String, Boolean> {
     }
 
     public void onFailedConnectionAttempt(Context context) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setTitle("Ha ocurrido un error")
-                .setMessage("No ha sido posible conectarse\nRevisa tu conexión a internet")
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
+        if (showDialogs) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            alert.setTitle("Ha ocurrido un error")
+                    .setMessage("No ha sido posible conectarse\nRevisa tu conexión a internet")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    }).show();
+        }
     }
 
-    public void onSuccessfulConnectionAttempt(Context context) {}
+    public void onSuccessfulConnectionAttempt(Context context) {
+    }
 }
